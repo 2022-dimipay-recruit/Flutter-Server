@@ -5,6 +5,7 @@ dist
 
 # environment variables
 .env
+.env.test
 
 # MacOS dummy
 .DS_Store
