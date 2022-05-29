@@ -1,0 +1,55 @@
+{
+  "name": "dprc-asked-flutter-server",
+  "version": "1.0.0",
+  "description": "2022 디미페이 채용 퍼포먼스 테스트 플러터조 서버 Repository입니다.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "test": "ts-node-dev src/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2022-dimipay-recruit/Flutter-Server.git"
+  },
+  "keywords": [
+    "Dimipay"
+  ],
+  "author": "Tilto_",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/2022-dimipay-recruit/Flutter-Server/issues"
+  },
+  "homepage": "https://github.com/2022-dimipay-recruit/Flutter-Server#readme",
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/koa": "^2.13.4",
+    "@types/koa__cors": "^3.3.0",
+    "@types/koa-bodyparser": "^4.3.7",
+    "@types/koa-logger": "^3.1.2",
+    "@types/koa-router": "^7.4.4",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "^17.0.36",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
+    "@typescript-eslint/parser": "^5.26.0",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.6.2",
+    "prisma": "^3.14.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "@koa/cors": "^3.3.0",
+    "@prisma/client": "^3.14.0",
+    "dotenv": "^16.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-helmet": "^6.1.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.1.1",
+    "luxon": "^2.4.0"
+  }
+}

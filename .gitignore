@@ -1,0 +1,10 @@
+# node.js module folder
+node_modules
+# source code build folder
+dist
+
+# environment variables
+.env
+
+# MacOS dummy
+.DS_Store
