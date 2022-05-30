@@ -1,5 +1,5 @@
 {
-  "name": "dprc-asked-flutter-server",
+  "name": "dprc-fserver",
   "version": "1.0.0",
   "description": "2022 디미페이 채용 퍼포먼스 테스트 플러터조 서버 Repository입니다.",
   "main": "dist/main.js",
