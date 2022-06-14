@@ -1,5 +1,4 @@
 import APIRouter from '../lib/APIRouter';
-import logger from '../lib/Logger';
 import {Context} from '../lib/Type';
 
 // ReturnRouter
@@ -7,23 +6,20 @@ export default class extends APIRouter {
   constructor() {
     super();
 
-    this['router'].get('/', function (context: Context): void {
+    this['router'].post('/login', function (context: Context): void {
       context['body'] = {
         status: 'success',
-        data: [context['query']],
+        data: null,
       };
-
-      logger.info(context['request']['query']);
 
       return;
     });
-    this['router'].post('/', function (context: Context): void {
+
+    this['router'].post('/token', function (context: Context): void {
       context['body'] = {
         status: 'success',
-        data: [context['request']['body']],
+        data: null,
       };
-
-      logger.info(context['request']['body']);
 
       return;
     });

@@ -1,13 +1,14 @@
 import KoaRouter from 'koa-router';
 
-export default class APIRouter {
+// APIRouter
+export default class {
   protected router: KoaRouter;
 
   constructor() {
-    this.router = new KoaRouter();
+    this['router'] = new KoaRouter();
   }
 
   public routes(): KoaRouter.IMiddleware<any, {}> {
-    return this.router.routes();
+    return this['router'].routes();
   }
 }
