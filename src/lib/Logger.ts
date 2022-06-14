@@ -116,6 +116,6 @@ class Logger {
 export default new Logger({
   transports: [
     process['stdout'].write.bind(process['stdout']),
-    Logger.getFileTransport(join(__dirname, '..', 'log')),
+    Logger.getFileTransport(join(__dirname, '..', '..', 'log')),
   ],
 });
