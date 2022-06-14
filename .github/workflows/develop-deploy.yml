@@ -7,7 +7,7 @@ on:
     branches: ['develop']
 
 jobs:
-  push:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
           remote: '/home/tilto/docker/dprc2022'
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.PASSWORD }}
+          password: ${{ secrets.SSH_PW }}
 
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master
