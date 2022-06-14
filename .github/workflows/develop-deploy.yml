@@ -38,7 +38,7 @@ jobs:
             echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
             chmod 700 ~/.ssh/id_rsa
             ssh-keyscan -H tilto.kr >> ~/.ssh/known_hosts
-            scp -o StrictHostKeyChecking=no -r "." ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}://home/tilto/docker/dprc2022
+            scp -o StrictHostKeyChecking=no -r "./" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}://home/tilto/docker/dprc2022
 
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master
