@@ -28,12 +28,12 @@ jobs:
           script: mkdir -p /home/tilto/docker/dprc2022
 
       - name: copy folder content recursively to remote
-        uses: mdallasanta/ssh-scp-deploy@main
+        uses: appleboy/scp-action@master
         with:
-          local: './'
-          remote: '/home/tilto/docker/dprc2022'
+          source: './'
+          target: '/home/tilto/docker/dprc2022'
           host: ${{ secrets.HOST }}
-          user: ${{ secrets.SSH_USER }}
+          username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PW }}
 
       - name: executing remote ssh commands
