@@ -43,4 +43,4 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PW }}
           script: |
-            ****sh /home/tilto/docker/deploy.sh
+            sh /home/tilto/docker/deploy.sh
