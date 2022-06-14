@@ -28,7 +28,7 @@ jobs:
           script: mkdir -p /home/tilto/docker/dprc2022
 
       - name: copy folder content recursively to remote
-        uses: mdallasanta/ssh-scp-deploy@1.2.0
+        uses: mdallasanta/ssh-scp-deploy@main
         with:
           local: './'
           remote: '/home/tilto/docker/dprc2022'
