@@ -1,0 +1,46 @@
+name: develop deploy
+
+on:
+  push:
+    branches: ['develop']
+  pull_request:
+    branches: ['develop']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: create env file
+        run: |
+          touch .env
+          echo "${{ secrets.ENV_VARS }}" >> .env
+
+      - name: create remote directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PW }}
+          script: mkdir -p /home/tilto/docker/dprc2022
+
+      - name: copy folder content recursively to remote
+        uses: mdallasanta/ssh-scp-deploy@main
+        with:
+          local: './'
+          remote: '/home/tilto/docker/dprc2022'
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PW }}
+
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PW }}
+          script: |
+            sh /home/tilto/docker/deploy.sh

@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String @id @default(cuid())
+  link           String // The link to the user's profile
+  nickname       String
+  email          String
+  comuQuestions  CommunityQuestion[]
+  anonyQuestions AnonymousQuestion[]
+}
+
+// 게시글 테이블은 두개인데, 하나는 익명 질문 모음 테이블
+// 또 하나는 커뮤니티 게시글 테이블
+
+model CommunityQuestion {
+  id          String @id @default(cuid())
+  title       String
+  content     String
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+}
+
+model AnonymousQuestion {
+	id					String @id @default(cuid())
+	title				String
+	content			String
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+}
