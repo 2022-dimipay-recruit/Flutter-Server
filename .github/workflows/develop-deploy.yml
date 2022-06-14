@@ -27,20 +27,20 @@ jobs:
           password: ${{ secrets.SSH_PW }}
           script: mkdir -p /home/tilto/docker/dprc2022
 
-      - name: copy source via ssh key
-        uses: burnett01/rsync-deployments@4.1
+      - name: copy folder content recursively to remote
+        uses:garygrossgarten/github-action-scp@release
         with:
-          switches: -avzr --delete
-          remote_path: /home/tilto/docker/dprc2022/
-          remote_host: ${{ secrets.SSH_HOST }}
-          remote_user: ${{ secrets.SSH_USER }}
-          remote_key: ${{ secrets.SSH_PW }}
+          local: ./
+          remote: /home/tilto/docker/dprc2022
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.PASSWORD }}
 
-      - name: executing remote ssh commands using password
+      - name: executing remote ssh commands
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PW }}
+          password: ${{ secrets.SSH_PW }}
           script: |
             ****sh /home/tilto/docker/deploy.sh
