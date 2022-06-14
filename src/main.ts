@@ -84,4 +84,4 @@ class MainServer {
 }
 
 const app = new MainServer();
-app.start(3000);
+app.start(Number(process.env.PORT) || 3000);
