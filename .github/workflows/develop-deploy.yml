@@ -5,7 +5,6 @@ on:
     branches: ['develop']
   pull_request:
     branches: ['develop']
-  workflow_dispatch:
 
 jobs:
   push:
@@ -25,7 +24,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PW }}
+          password: ${{ secrets.SSH_PW }}
           script: mkdir -p /home/tilto/docker/dprc2022
 
       - name: copy source via ssh key
