@@ -100,7 +100,7 @@ class Logger {
     return;
   }
 
-  static getFileTransporter(path: string): (message: string) => void {
+  static getFileTransport(path: string): (message: string) => void {
     return function (message: string): void {
       appendFile(
         join(path, new Date().toISOString().slice(0, 10) + '.log'),
@@ -116,6 +116,6 @@ class Logger {
 export default new Logger({
   transports: [
     process['stdout'].write.bind(process['stdout']),
-    Logger.getFileTransporter(join(__dirname, '..', 'log')),
+    Logger.getFileTransport(join(__dirname, '..', 'log')),
   ],
 });
