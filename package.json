@@ -1,7 +1,6 @@
 {
   "name": "dprc-fserver",
   "version": "1.0.0",
-  "type": "module",
   "description": "2022 디미페이 채용 퍼포먼스 테스트 플러터조 서버 Repository입니다.",
   "main": "dist/main.js",
   "scripts": {
@@ -44,9 +43,9 @@
   "dependencies": {
     "@koa/cors": "^3.3.0",
     "@prisma/client": "^3.15.2",
+    "axios": "^0.27.2",
     "dotenv": "^16.0.1",
     "firebase-admin": "^11.0.0",
-    "got": "^12.1.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",

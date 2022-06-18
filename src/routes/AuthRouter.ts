@@ -1,5 +1,5 @@
-import APIRouter from '../lib/APIRouter.js';
-import {Context} from '../lib/Type.js';
+import APIRouter from '../lib/APIRouter';
+import {Context} from '../lib/Type';
 
 // ReturnRouter
 export default class AuthRouter extends APIRouter {

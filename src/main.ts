@@ -6,12 +6,12 @@ import helmet from 'koa-helmet';
 
 import 'dotenv/config';
 
-import ReturnRouter from './routes/ReturnRouter.js';
-import {Context} from './lib/Type.js';
-import AuthRouter from './routes/AuthRouter.js';
-import UserRouter from './routes/UserRouter.js';
-import LoginRouter from './routes/LoginRouter.js';
-import Logger from './lib/Logger.js';
+import ReturnRouter from './routes/ReturnRouter';
+import {Context} from './lib/Type';
+import AuthRouter from './routes/AuthRouter';
+import UserRouter from './routes/UserRouter';
+import LoginRouter from './routes/LoginRouter';
+import Logger from './lib/Logger';
 
 class MainServer {
   private app: Koa;

@@ -1,6 +1,6 @@
-import APIRouter from '../lib/APIRouter.js';
-import Logger from '../lib/Logger.js';
-import {Context} from '../lib/Type.js';
+import APIRouter from '../lib/APIRouter';
+import Logger from '../lib/Logger';
+import {Context} from '../lib/Type';
 
 // ReturnRouter
 export default class ReturnRouter extends APIRouter {

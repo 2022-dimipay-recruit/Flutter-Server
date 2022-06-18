@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 import path from 'path';
 import {join} from 'path/posix';
 import {inspect} from 'util';
-import {LogLevel} from './Type.js';
+import {LogLevel} from './Type';
 
 /**
  * @class Logger
@@ -11,6 +11,8 @@ import {LogLevel} from './Type.js';
  * Flutter-Server의 로거 라이브러리입니다. 모든 로깅은 해당 라이브러리를 통해 진행합니다.
  */
 export default class Logger {
+  public static global = new Logger('Logger', false);
+
   private _level = 0;
   private name = 'unknown';
   private path = path.join(__dirname, '..', '..', 'logs');
@@ -34,28 +36,33 @@ export default class Logger {
   }
 
   private log(level: LogLevel, _arguments: unknown[]): void {
-    if (this.levels[level] >= this._level) {
-      for (let i = 0; i < _arguments['length']; i++) {
-        if (typeof _arguments[i] === 'object') {
-          _arguments[i] = inspect(_arguments[i], false, 4, false);
+    try {
+      if (this.levels[level] >= this._level) {
+        for (let i = 0; i < _arguments['length']; i++) {
+          if (typeof _arguments[i] === 'object') {
+            _arguments[i] = inspect(_arguments[i], false, 4, false);
+          }
         }
+
+        const currentTime = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
+
+        const message = `\<${currentTime}> [${this.name}:${level}]${' '.repeat(
+          6 - level.length,
+        )}${_arguments.join(' ')}\n`;
+
+        process.stdout.write(message);
+
+        //! Error : The "chunk" argument must be of type string or an instance of Buffer or Uint8Array.
+        // if (typeof this.path === 'string' && this.storeInFile) {
+        //   appendFile(
+        //     join(this.path, new Date().toISOString().slice(0, 10) + '.log'),
+        //     message,
+        //     'utf-8',
+        //   ).catch(process.stdout.write.bind(process.stdout));
+        // }
       }
-
-      const currentTime = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
-
-      const message = `\<${currentTime}> [${this.name}:${level}]${' '.repeat(
-        6 - level.length,
-      )}${_arguments.join(' ')}\n`;
-
-      process.stdout.write(message);
-
-      if (typeof this.path === 'string' && this.storeInFile) {
-        appendFile(
-          join(this.path, new Date().toISOString().slice(0, 10) + '.log'),
-          message,
-          'utf-8',
-        ).catch(process.stdout.write.bind(process.stdout));
-      }
+    } catch (error) {
+      Logger.global.error(error);
     }
 
     return;

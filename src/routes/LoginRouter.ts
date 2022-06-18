@@ -1,10 +1,10 @@
 import {Context} from 'koa';
-import got from 'got';
+import axios from 'axios';
 import admin, {ServiceAccount} from 'firebase-admin';
 import {UserRecord} from 'firebase-admin/lib/auth/user-record';
 
-import APIRouter from '../lib/APIRouter.js';
-import Logger from '../lib/Logger.js';
+import APIRouter from '../lib/APIRouter';
+import Logger from '../lib/Logger';
 
 const kakaoRequestMeUrl = 'https://kapi.kakao.com/v2/user/me';
 
@@ -15,8 +15,8 @@ const fbCredential: ServiceAccount = {
       ? process.env.FB_PROJECT_ID
       : '',
   privateKey:
-    typeof process.env.FB_PRIVATE_KEY_ID === 'string'
-      ? process.env.FB_PRIVATE_KEY_ID
+    typeof process.env.FB_PRIVATE_KEY === 'string'
+      ? process.env.FB_PRIVATE_KEY
       : '',
   clientEmail:
     typeof process.env.FB_CLIENT_EMAIL === 'string'
@@ -61,13 +61,10 @@ export default class LoginRouter extends APIRouter {
         'Requesting user profile from Kakao API server. ' + access_token,
       );
       const kakaoMeResult = JSON.parse(
-        (
-          await got(kakaoRequestMeUrl, {
-            method: 'GET',
-            headers: {Authorization: 'Bearer ' + access_token},
-            json: true,
-          })
-        ).body,
+        await axios.get(kakaoRequestMeUrl, {
+          method: 'GET',
+          headers: {Authorization: 'Bearer ' + access_token},
+        }),
       );
       // let requestMeResult = await requestMe(access_token);
       const userData = kakaoMeResult.data;
