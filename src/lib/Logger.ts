@@ -1,7 +1,6 @@
 import {appendFile} from 'fs/promises';
 import {DateTime} from 'luxon';
 import path from 'path';
-import {join} from 'path/posix';
 import {inspect} from 'util';
 import {LogLevel} from './Type';
 

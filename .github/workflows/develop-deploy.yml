@@ -18,6 +18,7 @@ jobs:
         run: |
           touch .env
           echo "${{ secrets.ENV_VARS }}" >> .env
+          cat .env
 
       - name: create remote directory
         uses: appleboy/ssh-action@master
@@ -35,19 +36,6 @@ jobs:
           password: ${{ secrets.SSH_PW }}
           source: './'
           target: '/home/tilto/docker/dprc2022'
-
-      # - name: copy folder content to remote
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.SSH_HOST }}
-      #     username: ${{ secrets.SSH_USER }}
-      #     password: ${{ secrets.SSH_PW }}
-      #     script: |
-      #       mkdir -p ~/.ssh
-      #       echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-      #       chmod 700 ~/.ssh/id_rsa
-      #       ssh-keyscan -H tilto.kr >> ~/.ssh/known_hosts
-      #       scp -o StrictHostKeyChecking=no -r $(pwd) ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/tilto/docker/dprc2022
 
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master
