@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:lts-gallium
 
 ENV PORT=80
 EXPOSE 80
