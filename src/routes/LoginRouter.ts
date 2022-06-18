@@ -1,10 +1,10 @@
 import {Context} from 'koa';
 import got from 'got';
 import admin, {ServiceAccount} from 'firebase-admin';
-
-import APIRouter from '../lib/APIRouter';
 import {UserRecord} from 'firebase-admin/lib/auth/user-record';
-import Logger from '../lib/Logger';
+
+import APIRouter from '../lib/APIRouter.js';
+import Logger from '../lib/Logger.js';
 
 const kakaoRequestMeUrl = 'https://kapi.kakao.com/v2/user/me';
 
@@ -47,8 +47,12 @@ admin.initializeApp({
 });
 
 export default class LoginRouter extends APIRouter {
+  private logger: Logger;
+
   constructor() {
     super();
+
+    this.logger = new Logger('LoginRouter', true);
 
     this.router.post('/kakao', async (context: Context): Promise<void> => {
       const {access_token} = context.request.body;
@@ -101,12 +105,12 @@ export default class LoginRouter extends APIRouter {
       };
 
       if (nickname) {
-        updateParams['displayName'] = nickname;
+        updateParams.displayName = nickname;
       } else {
-        updateParams['displayName'] = userData.kakao_account.email;
+        updateParams.displayName = userData.kakao_account.email;
       }
       if (profileImage) {
-        updateParams['photoURL'] = profileImage;
+        updateParams.photoURL = profileImage;
       }
 
       // await updateOrCreateUser(updateParams);
@@ -116,7 +120,7 @@ export default class LoginRouter extends APIRouter {
       let userRecord: null | UserRecord = null;
 
       try {
-        userRecord = await admin.auth().getUserByEmail(updateParams['email']);
+        userRecord = await admin.auth().getUserByEmail(updateParams.email);
       } catch (error: any) {
         if (error.code || error.code === 'auth/user-not-found') {
           userRecord = await admin.auth().createUser(updateParams);
@@ -124,7 +128,7 @@ export default class LoginRouter extends APIRouter {
         throw error;
       }
 
-      Logger.info(userRecord);
+      this.logger.info(userRecord);
 
       const resultCustomToken = admin
         .auth()

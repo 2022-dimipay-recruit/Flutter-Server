@@ -1,12 +1,21 @@
 import {appendFile} from 'fs/promises';
+import {DateTime} from 'luxon';
+import path from 'path';
 import {join} from 'path/posix';
 import {inspect} from 'util';
-import {Level, LoggerOptions} from './Type';
+import {LogLevel} from './Type.js';
 
-class Logger {
+/**
+ * @class Logger
+ *
+ * Flutter-Server의 로거 라이브러리입니다. 모든 로깅은 해당 라이브러리를 통해 진행합니다.
+ */
+export default class Logger {
   private _level = 0;
-  private transports: LoggerOptions['transports'] = [];
-  private levels: Record<LoggerOptions['level'], number> = {
+  private name = 'unknown';
+  private path = path.join(__dirname, '..', '..', 'logs');
+  private storeInFile = false;
+  private levels: Record<LogLevel, number> = {
     fatal: 5,
     error: 4,
     warn: 3,
@@ -15,49 +24,37 @@ class Logger {
     trace: 0,
   } as const;
 
-  constructor(options?: Partial<LoggerOptions>) {
-    if (typeof options === 'object') {
-      if (Array.isArray(options['transports'])) {
-        this['transports'] = options['transports'];
-      }
-
-      if (typeof options['level'] === 'string') {
-        this['_level'] = this['levels'][options['level']] || 0;
-      }
-    }
+  /**
+   * 로거를 생성합니다.
+   * @param options 로거의 옵션을 입력받습니다.
+   */
+  constructor(name: string, storeInFile = false) {
+    this.name = name;
+    this.storeInFile = storeInFile;
   }
 
-  private log(level: Level, _arguments: unknown[]): void {
-    if (this['levels'][level] >= this['_level']) {
+  private log(level: LogLevel, _arguments: unknown[]): void {
+    if (this.levels[level] >= this._level) {
       for (let i = 0; i < _arguments['length']; i++) {
         if (typeof _arguments[i] === 'object') {
           _arguments[i] = inspect(_arguments[i], false, 4, false);
         }
       }
 
-      const currentTime: Date = new Date();
-      const message: string =
-        '[' +
-        currentTime.getUTCFullYear() +
-        '/' +
-        String(currentTime.getUTCMonth() + 1).padStart(2, '0') +
-        '/' +
-        String(currentTime.getUTCDate()).padStart(2, '0') +
-        ' ' +
-        String(currentTime.getUTCHours()).padStart(2, '0') +
-        ':' +
-        String(currentTime.getUTCMinutes()).padStart(2, '0') +
-        ':' +
-        String(currentTime.getUTCMinutes()).padStart(2, '0') +
-        '][' +
-        level.toUpperCase() +
-        ']' +
-        ' '.repeat(6 - level['length']) +
-        _arguments.join(' ') +
-        '\n';
+      const currentTime = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
 
-      for (let i = 0; i < this['transports']['length']; i++) {
-        this['transports'][i](message);
+      const message = `\<${currentTime}> [${this.name}:${level}]${' '.repeat(
+        6 - level.length,
+      )}${_arguments.join(' ')}\n`;
+
+      process.stdout.write(message);
+
+      if (typeof this.path === 'string' && this.storeInFile) {
+        appendFile(
+          join(this.path, new Date().toISOString().slice(0, 10) + '.log'),
+          message,
+          'utf-8',
+        ).catch(process.stdout.write.bind(process.stdout));
       }
     }
 
@@ -99,23 +96,4 @@ class Logger {
 
     return;
   }
-
-  static getFileTransport(path: string): (message: string) => void {
-    return function (message: string): void {
-      appendFile(
-        join(path, new Date().toISOString().slice(0, 10) + '.log'),
-        message,
-        'utf-8',
-      ).catch(console.error);
-
-      return;
-    };
-  }
 }
-
-export default new Logger({
-  transports: [
-    process['stdout'].write.bind(process['stdout']),
-    Logger.getFileTransport(join(__dirname, '..', '..', 'log')),
-  ],
-});

@@ -1,13 +1,13 @@
-import APIRouter from '../lib/APIRouter';
-import {Context} from '../lib/Type';
+import APIRouter from '../lib/APIRouter.js';
+import {Context} from '../lib/Type.js';
 
 // ReturnRouter
-export default class extends APIRouter {
+export default class UserRouter extends APIRouter {
   constructor() {
     super();
 
-    this['router'].post('/', function (context: Context): void {
-      context['body'] = {
+    this.router.post('/', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
@@ -15,8 +15,8 @@ export default class extends APIRouter {
       return;
     });
 
-    this['router'].get('/', function (context: Context): void {
-      context['body'] = {
+    this.router.get('/', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
@@ -24,8 +24,8 @@ export default class extends APIRouter {
       return;
     });
 
-    this['router'].post('/:id', function (context: Context): void {
-      context['body'] = {
+    this.router.post('/:id', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
@@ -33,8 +33,8 @@ export default class extends APIRouter {
       return;
     });
 
-    this['router'].patch('/:id', function (context: Context): void {
-      context['body'] = {
+    this.router.patch('/:id', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
@@ -42,8 +42,8 @@ export default class extends APIRouter {
       return;
     });
 
-    this['router'].get('/:id', function (context: Context): void {
-      context['body'] = {
+    this.router.get('/:id', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
@@ -51,8 +51,8 @@ export default class extends APIRouter {
       return;
     });
 
-    this['router'].delete('/:id', function (context: Context): void {
-      context['body'] = {
+    this.router.delete('/:id', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };

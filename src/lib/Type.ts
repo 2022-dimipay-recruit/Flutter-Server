@@ -1,6 +1,6 @@
 import {ParameterizedContext} from 'koa';
 
-export type Level = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
+export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
 interface NormalResponse {
   status: 'success' | 'fail';
@@ -21,8 +21,3 @@ export type Context = ParameterizedContext<
   Record<string, any>,
   NormalResponse | ErrorResponse
 >;
-
-export interface LoggerOptions {
-  transports: ((message: string) => void)[];
-  level: Level;
-}

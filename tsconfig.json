@@ -1,15 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "rootDir": "./src",
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "resolveJsonModule": false,
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./dist",
     "removeComments": true,
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": false,
+    "skipLibCheck": false,
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+    "outDir": "./dist"
   }
 }

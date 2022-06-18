@@ -1,29 +1,33 @@
-import APIRouter from '../lib/APIRouter';
-import logger from '../lib/Logger';
-import {Context} from '../lib/Type';
+import APIRouter from '../lib/APIRouter.js';
+import Logger from '../lib/Logger.js';
+import {Context} from '../lib/Type.js';
 
 // ReturnRouter
-export default class extends APIRouter {
+export default class ReturnRouter extends APIRouter {
+  private logger: Logger;
+
   constructor() {
     super();
 
-    this['router'].get('/', function (context: Context): void {
-      context['body'] = {
+    this.logger = new Logger('ReturnRouter', true);
+
+    this.router.get('/', (context: Context): void => {
+      context.body = {
         status: 'success',
-        data: [context['query']],
+        data: [context.query],
       };
 
-      logger.info(context['request']['query']);
+      this.logger.info(context.request.query);
 
       return;
     });
-    this['router'].post('/', function (context: Context): void {
-      context['body'] = {
+    this.router.post('/', (context: Context): void => {
+      context.body = {
         status: 'success',
-        data: [context['request']['body']],
+        data: [context.request.body],
       };
 
-      logger.info(context['request']['body']);
+      this.logger.info(context.request.query);
 
       return;
     });

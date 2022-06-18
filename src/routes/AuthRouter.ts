@@ -1,13 +1,13 @@
-import APIRouter from '../lib/APIRouter';
-import {Context} from '../lib/Type';
+import APIRouter from '../lib/APIRouter.js';
+import {Context} from '../lib/Type.js';
 
 // ReturnRouter
-export default class extends APIRouter {
+export default class AuthRouter extends APIRouter {
   constructor() {
     super();
 
-    this['router'].post('/login', function (context: Context): void {
-      context['body'] = {
+    this.router.post('/login', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
@@ -15,8 +15,8 @@ export default class extends APIRouter {
       return;
     });
 
-    this['router'].post('/token', function (context: Context): void {
-      context['body'] = {
+    this.router.post('/token', (context: Context): void => {
+      context.body = {
         status: 'success',
         data: null,
       };
