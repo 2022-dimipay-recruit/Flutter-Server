@@ -1,81 +1,52 @@
 import {Context} from 'koa';
 import got from 'got';
-import admin, {initializeApp} from 'firebase-admin';
+import admin, {ServiceAccount} from 'firebase-admin';
 
 import APIRouter from '../lib/APIRouter';
 import {UserRecord} from 'firebase-admin/lib/auth/user-record';
+import Logger from '../lib/Logger';
 
 const kakaoRequestMeUrl = 'https://kapi.kakao.com/v2/user/me';
 
+const fbCredential: ServiceAccount = {
+  // type: 'service_account',
+  projectId:
+    typeof process.env.FB_PROJECT_ID === 'string'
+      ? process.env.FB_PROJECT_ID
+      : '',
+  privateKey:
+    typeof process.env.FB_PRIVATE_KEY_ID === 'string'
+      ? process.env.FB_PRIVATE_KEY_ID
+      : '',
+  clientEmail:
+    typeof process.env.FB_CLIENT_EMAIL === 'string'
+      ? process.env.FB_CLIENT_EMAIL
+      : '',
+  // client_id:
+  //   typeof process.env.FB_CLIENT_ID === 'string'
+  //     ? process.env.FB_CLIENT_ID
+  //     : '',
+  // auth_uri:
+  //   typeof process.env.FB_AUTH_URI === 'string' ? process.env.FB_AUTH_URI : '',
+  // token_uri:
+  //   typeof process.env.FB_TOKEN_URI === 'string'
+  //     ? process.env.FB_TOKEN_URI
+  //     : '',
+  // auth_provider_x509_cert_url:
+  //   typeof process.env.FB_AUTH_PROVIDER_X509_CERT_URL === 'string'
+  //     ? process.env.FB_AUTH_PROVIDER_X509_CERT_URL
+  //     : '',
+  // client_x509_cert_url:
+  //   typeof process.env.FB_CLIENT_X509_CERT_URL === 'string'
+  //     ? process.env.FB_CLIENT_X509_CERT_URL
+  //     : '',
+};
+
 admin.initializeApp({
-  // credential: admin.credential.cert(),
+  credential: admin.credential.cert(fbCredential),
 });
 
-// async function createFirebaseToken(kakaoAccessToken: string) {
-//   console.log(
-//     'Requesting user profile from Kakao API server. ' + kakaoAccessToken,
-//   );
-//   const kakaoMeResult = JSON.parse(
-//     (
-//       await got(kakaoRequestMeUrl, {
-//         method: 'GET',
-//         headers: {Authorization: 'Bearer ' + kakaoAccessToken},
-//         json: true,
-//       })
-//     ).body,
-//   );
-//   // let requestMeResult = await requestMe(kakaoAccessToken);
-//   const userData = kakaoMeResult.data;
-
-//   const userId = `kakao:${userData.id}`;
-//   if (!userId) {
-//     // return response
-//     //   .status(404)
-//     //   .send({message: 'There was no user with the given access token.'});
-//   }
-
-//   let nickname = null;
-//   let profileImage = null;
-//   if (userData.properties) {
-//     nickname = userData.properties.nickname;
-//     profileImage = userData.properties.profile_image;
-//   }
-
-//   const updateParams = {
-//     uid: userId,
-//     provider: 'KAKAO',
-//     displayName: nickname,
-//     email: userData.kakao_account.email,
-//   };
-
-//   if (nickname) {
-//     updateParams['displayName'] = nickname;
-//   } else {
-//     updateParams['displayName'] = userData.kakao_account.email;
-//   }
-//   // if (profileImage) {
-//   //   updateParams['photoURL'] = profileImage;
-//   // }
-
-//   // await updateOrCreateUser(updateParams);
-
-//   console.log('updating or creating a firebase user');
-
-//   let userRecord: null | UserRecord = null;
-
-//   try {
-//     userRecord = await admin.auth().getUserByEmail(updateParams['email']);
-//   } catch (error: any) {
-//     if (error.code || error.code === 'auth/user-not-found') {
-//       return admin.auth().createUser(updateParams);
-//     }
-//     throw error;
-//   }
-
-//   return admin.auth().createCustomToken(userId, {provider: 'KAKAO'});
-// }
-
-class LoginRouter extends APIRouter {
+export default class LoginRouter extends APIRouter {
   constructor() {
     super();
 
@@ -99,6 +70,13 @@ class LoginRouter extends APIRouter {
 
       const userId = `kakao:${userData.id}`;
       if (!userId) {
+        context.body = {
+          status: 'failed',
+          data: {
+            message: 'There was no user with the given access token.',
+          },
+        };
+        return;
         // return response
         //   .status(404)
         //   .send({message: 'There was no user with the given access token.'});
@@ -119,6 +97,7 @@ class LoginRouter extends APIRouter {
         provider: 'KAKAO',
         displayName: nickname,
         email: userData.kakao_account.email,
+        photoURL: '',
       };
 
       if (nickname) {
@@ -127,7 +106,7 @@ class LoginRouter extends APIRouter {
         updateParams['displayName'] = userData.kakao_account.email;
       }
       if (profileImage) {
-        // updateParams['photoURL'] = profileImage;
+        updateParams['photoURL'] = profileImage;
       }
 
       // await updateOrCreateUser(updateParams);
@@ -145,6 +124,8 @@ class LoginRouter extends APIRouter {
         throw error;
       }
 
+      Logger.info(userRecord);
+
       const resultCustomToken = admin
         .auth()
         .createCustomToken(userId, {provider: 'KAKAO'});
@@ -153,7 +134,9 @@ class LoginRouter extends APIRouter {
 
       context.body = {
         status: 'success',
-        data: null,
+        data: {
+          token: resultCustomToken,
+        },
       };
 
       return;

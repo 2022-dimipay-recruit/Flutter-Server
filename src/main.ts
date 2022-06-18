@@ -10,6 +10,7 @@ import ReturnRouter from './routes/ReturnRouter';
 import {Context} from './lib/Type';
 import AuthRouter from './routes/AuthRouter';
 import UserRouter from './routes/UserRouter';
+import LoginRouter from './routes/LoginRouter';
 
 class MainServer {
   private app: Koa;
@@ -61,6 +62,7 @@ class MainServer {
     this['router'].use('/return', new ReturnRouter().routes());
     this['router'].use('/auth', new AuthRouter().routes());
     this['router'].use('/users', new UserRouter().routes());
+    this['router'].use('/login', new LoginRouter().routes());
 
     this['router'].get('/', function (context: Context): void {
       context['body'] = {
