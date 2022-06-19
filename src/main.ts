@@ -4,7 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import helmet from 'koa-helmet';
 
-import 'dotenv/config';
+import './lib/Environment';
 
 import ReturnRouter from './routes/ReturnRouter';
 import {Context} from './lib/Type';
