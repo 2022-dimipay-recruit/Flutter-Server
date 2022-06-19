@@ -101,7 +101,7 @@ export default class LoginRouter extends APIRouter {
     this.router.post('/kakao', async (context: Context): Promise<void> => {
       const {access_token} = context.request.body;
 
-      console.log(
+      this.logger.info(
         'Requesting user profile from Kakao API server. ' + access_token,
       );
 
@@ -111,11 +111,13 @@ export default class LoginRouter extends APIRouter {
         kakaoMeResult = (
           await axios.get(kakaoRequestMeUrl, {
             method: 'GET',
-            headers: {Authorization: 'Bearer ' + access_token},
+            headers: {Authorization: `Bearer ${access_token}`},
           })
         ).data;
       } catch (error) {
-        this.logger.error(error);
+        this.logger.error(
+          `Failed to get user profile from Kakao API server : ${access_token}`,
+        );
         context.body = {
           status: 'failed',
           data: {
@@ -189,6 +191,8 @@ export default class LoginRouter extends APIRouter {
       const resultCustomToken = admin
         .auth()
         .createCustomToken(userId, {provider: 'KAKAO'});
+
+      this.logger.info(resultCustomToken);
 
       // return
 
