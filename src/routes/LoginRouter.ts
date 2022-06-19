@@ -190,6 +190,8 @@ export default class LoginRouter extends APIRouter {
         .auth()
         .createCustomToken(userId, {provider: 'KAKAO'});
 
+      this.logger.info(`Custom token created : ${resultCustomToken}`);
+
       // return
 
       context.body = {
