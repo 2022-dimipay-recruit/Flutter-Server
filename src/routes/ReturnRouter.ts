@@ -9,7 +9,10 @@ export default class ReturnRouter extends APIRouter {
   constructor() {
     super();
 
-    this.logger = new Logger('ReturnRouter', true);
+    this.logger = new Logger({
+      name: 'ReturnRouter',
+      storeInFile: true,
+    });
 
     this.router.get('/', (context: Context): void => {
       context.body = {

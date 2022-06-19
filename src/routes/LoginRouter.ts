@@ -1,4 +1,4 @@
-import {Context} from 'koa';
+import {Context} from '../lib/Type';
 import axios from 'axios';
 import admin, {ServiceAccount} from 'firebase-admin';
 import {UserRecord} from 'firebase-admin/lib/auth/user-record';
@@ -96,7 +96,10 @@ export default class LoginRouter extends APIRouter {
   constructor() {
     super();
 
-    this.logger = new Logger('LoginRouter', true);
+    this.logger = new Logger({
+      name: 'LoginRouter',
+      storeInFile: true,
+    });
 
     this.router.post('/kakao', async (context: Context, next) => {
       const {access_token} = context.request.body;
@@ -122,7 +125,7 @@ export default class LoginRouter extends APIRouter {
         const userId = `kakao:${userData.id}`;
         if (!userData.id) {
           context.body = {
-            status: 'failed',
+            status: 'fail',
             data: {
               message: 'There was no user with the given access token.',
             },
@@ -195,7 +198,7 @@ export default class LoginRouter extends APIRouter {
           `Failed to get user profile from Kakao API server : ${access_token}`,
         );
         context.body = {
-          status: 'failed',
+          status: 'fail',
           data: {
             message: 'Failed to get user profile from Kakao API server.',
           },

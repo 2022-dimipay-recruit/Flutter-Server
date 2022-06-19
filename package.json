@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc --project ./tsconfig.json",
     "start": "node dist/main.js",
-    "test": "ts-node-dev src/main.ts"
+    "dev": "ts-node-dev src/main.ts",
+		"prettier": "prettier --config ./.prettierrc --write ./src/**/*.ts"
   },
   "repository": {
     "type": "git",

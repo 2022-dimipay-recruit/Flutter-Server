@@ -4,7 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import helmet from 'koa-helmet';
 
-import 'dotenv/config';
+import './lib/Environment';
 
 import ReturnRouter from './routes/ReturnRouter';
 import {Context} from './lib/Type';
@@ -22,7 +22,10 @@ class MainServer {
     this.app = new Koa();
     this.router = new Router();
 
-    this.logger = new Logger('MainServer', true);
+    this.logger = new Logger({
+      name: 'MainServer',
+      storeInFile: true,
+    });
 
     this.app.use(bodyParser());
     this.app.use(cors());
