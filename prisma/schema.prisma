@@ -1,22 +1,19 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
   id             String          @id @default(uuid())
-  link           String // The link to the user's profile
+  link           String
   nickname       String
   email          String
-  comuQuestions  CommunityPost[]
   anonyQuestions AnonymousPost[]
+  comuQuestions  CommunityPost[]
 }
 
 model CommunityPost {
@@ -25,9 +22,11 @@ model CommunityPost {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   isAnony   Boolean
+  author    User     @relation(fields: [authorId], references: [id])
+
+  @@index([authorId], map: "CommunityPost_authorId_fkey")
 }
 
 model AnonymousPost {
@@ -36,7 +35,9 @@ model AnonymousPost {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   isAnony   Boolean
+  author    User     @relation(fields: [authorId], references: [id])
+
+  @@index([authorId], map: "AnonymousPost_authorId_fkey")
 }

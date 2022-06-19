@@ -1,61 +1,60 @@
 import APIRouter from '../lib/APIRouter';
-import {Context} from '../lib/Type';
 
 // ReturnRouter
 export default class UserRouter extends APIRouter {
   constructor() {
     super();
 
-    this.router.post('/', (context: Context): void => {
-      context.body = {
+    this.router.post('/', (req, res): void => {
+      res.send({
         status: 'success',
         data: null,
-      };
+      });
 
       return;
     });
 
-    this.router.get('/', (context: Context): void => {
-      context.body = {
+    this.router.get('/', (req, res): void => {
+      res.send({
         status: 'success',
         data: null,
-      };
+      });
 
       return;
     });
 
-    this.router.post('/:id', (context: Context): void => {
-      context.body = {
+    this.router.post('/:id', (req, res): void => {
+      res.send({
         status: 'success',
         data: null,
-      };
+      });
 
       return;
     });
 
-    this.router.patch('/:id', (context: Context): void => {
-      context.body = {
+    this.router.patch('/:id', (req, res): void => {
+      res.send({
         status: 'success',
         data: null,
-      };
+      });
 
       return;
     });
 
-    this.router.get('/:id', (context: Context): void => {
-      context.body = {
+    this.router.get('/:id', (req, res): void => {
+      res.send({
         status: 'success',
         data: null,
-      };
+      });
 
       return;
     });
 
-    this.router.delete('/:id', (context: Context): void => {
-      context.body = {
+    this.router.delete('/:id', (req, res): void => {
+      res.send({
         status: 'success',
         data: null,
-      };
+      });
 
       return;
     });

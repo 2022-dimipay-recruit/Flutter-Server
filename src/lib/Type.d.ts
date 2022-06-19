@@ -1,4 +1,4 @@
-import {ParameterizedContext} from 'koa';
+// import {ParameterizedContext} from 'koa';
 import {REQUIRED_ENVIRONMENT_VARIABLE_NAMES} from './Environment';
 
 declare global {
@@ -27,10 +27,10 @@ interface ErrorResponse {
   data?: NormalResponse['data'];
 }
 
-export type Context = ParameterizedContext<
-  {
-    body: string;
-  },
-  Record<string, any>,
-  NormalResponse | ErrorResponse
->;
+// export type Context = ParameterizedContext<
+//   {
+//     body: string;
+//   },
+//   Record<string, any>,
+//   NormalResponse | ErrorResponse
+// >;

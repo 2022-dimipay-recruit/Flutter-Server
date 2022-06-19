@@ -1,87 +1,99 @@
-import Koa from 'koa';
-import Router from 'koa-router';
-import bodyParser from 'koa-bodyparser';
-import cors from '@koa/cors';
-import helmet from 'koa-helmet';
+// import Koa from 'koa';
+// import Router from 'koa-router';
+// import bodyParser from 'koa-bodyparser';
+// import cors from '@koa/cors';
+// import helmet from 'koa-helmet';
+
+import Express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
 
 import './lib/Environment';
 
 import ReturnRouter from './routes/ReturnRouter';
-import {Context} from './lib/Type';
 import AuthRouter from './routes/AuthRouter';
 import UserRouter from './routes/UserRouter';
 import LoginRouter from './routes/LoginRouter';
 import Logger from './lib/Logger';
 
 class MainServer {
-  private app: Koa;
-  private router: Router;
+  private app: Express.Application;
+  private router: Express.Router;
   private logger: Logger;
 
   constructor() {
-    this.app = new Koa();
-    this.router = new Router();
+    this.app = Express();
+    this.router = Express.Router();
 
     this.logger = new Logger({
       name: 'MainServer',
       storeInFile: true,
     });
 
-    this.app.use(bodyParser());
+    this.app.use(Express.json());
+    this.app.use(Express.urlencoded({extended: true}));
     this.app.use(cors());
     this.app.use(helmet());
-    this.app.use((context: Context, next: () => void): void => {
-      const done = (): void => {
-        context.res.removeListener('close', done);
-
+    this.app.use((req, res, next: () => void): void => {
+      if (res.headersSent) {
         this.logger.info(
-          (context.ip.charAt(0) !== ':' ? context.ips[0] : '172.0.0.1') +
+          (req.ip.charAt(0) !== ':' ? req.ips[0] : '172.0.0.1') +
             ' "' +
-            context.request.method +
+            req.method +
             ' ' +
-            decodeURIComponent(context.request.url) +
+            decodeURIComponent(req.url) +
             ' HTTP/' +
-            context.req.httpVersion +
+            req.httpVersion +
             '" ' +
-            context.status +
+            res.statusCode +
             ' "' +
-            context.header['user-agent'] +
+            res.header('user-agent') +
             '"',
         );
-
-        return;
-      };
-
-      context.res.once('close', done);
-
+      } else {
+        res.on('finish', () => {
+          this.logger.info(
+            (req.ip.charAt(0) !== ':' ? req.ips[0] : '172.0.0.1') +
+              ' "' +
+              req.method +
+              ' ' +
+              decodeURIComponent(req.url) +
+              ' HTTP/' +
+              req.httpVersion +
+              '" ' +
+              res.statusCode +
+              ' "' +
+              req.header('user-agent') +
+              '"',
+          );
+        });
+      }
       next();
-
-      return;
     });
 
     this.createRoutes();
 
-    this.app.use(this.router.routes());
-    this.app.use(this.router.allowedMethods());
+    this.app.use(this.router);
+
+    // this.app.use(this.router.routes());
+    // this.app.use(this.router.allowedMethods());
   }
 
   private createRoutes() {
-    this.router.use('/return', new ReturnRouter().routes());
-    this.router.use('/auth', new AuthRouter().routes());
-    this.router.use('/users', new UserRouter().routes());
-    this.router.use('/login', new LoginRouter().routes());
+    this.router.use('/return', new ReturnRouter().expressRouter);
+    this.router.use('/auth', new AuthRouter().expressRouter);
+    this.router.use('/users', new UserRouter().expressRouter);
+    this.router.use('/login', new LoginRouter().expressRouter);
 
-    this.router.get('/', (context: Context): void => {
-      context.body = {
+    this.router.get('/', (req, res): void => {
+      res.send({
         status: 'success',
         data: [
           {
             body: 'Hello World!',
           },
         ],
-      };
-
-      return;
+      });
     });
   }
 

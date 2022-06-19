@@ -1,6 +1,5 @@
 import APIRouter from '../lib/APIRouter';
 import Logger from '../lib/Logger';
-import {Context} from '../lib/Type';
 
 // ReturnRouter
 export default class ReturnRouter extends APIRouter {
@@ -14,23 +13,21 @@ export default class ReturnRouter extends APIRouter {
       storeInFile: true,
     });
 
-    this.router.get('/', (context: Context): void => {
-      context.body = {
+    this.router.get('/', (req, res, next): void => {
+      this.logger.info(req.query);
+      res.send({
         status: 'success',
-        data: [context.query],
-      };
-
-      this.logger.info(context.request.query);
+        data: [req.query],
+      });
 
       return;
     });
-    this.router.post('/', (context: Context): void => {
-      context.body = {
+    this.router.post('/', (req, res, next): void => {
+      this.logger.info(req.query);
+      res.send({
         status: 'success',
-        data: [context.request.body],
-      };
-
-      this.logger.info(context.request.query);
+        data: [req.body],
+      });
 
       return;
     });
