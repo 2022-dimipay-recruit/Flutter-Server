@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "mysql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -11,31 +11,32 @@ generator client {
 }
 
 model User {
-  id             String @id @default(cuid())
+  id             String          @id @default(uuid())
   link           String // The link to the user's profile
   nickname       String
   email          String
-  comuQuestions  CommunityQuestion[]
-  anonyQuestions AnonymousQuestion[]
+  comuQuestions  CommunityPost[]
+  anonyQuestions AnonymousPost[]
 }
 
-// 게시글 테이블은 두개인데, 하나는 익명 질문 모음 테이블
-// 또 하나는 커뮤니티 게시글 테이블
-
-model CommunityQuestion {
-  id          String @id @default(cuid())
-  title       String
-  content     String
-  updatedAt   DateTime @updatedAt
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
+model CommunityPost {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  isAnony   Boolean
 }
 
-model AnonymousQuestion {
-	id					String @id @default(cuid())
-	title				String
-	content			String
-  updatedAt   DateTime @updatedAt
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
+model AnonymousPost {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  isAnony   Boolean
 }
