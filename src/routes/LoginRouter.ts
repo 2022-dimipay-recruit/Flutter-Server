@@ -127,8 +127,6 @@ export default class LoginRouter extends APIRouter {
         return;
       }
 
-      this.logger.info(kakaoMeResult);
-
       // const kakaoMeResult = JSON.parse(kakaoResult.data);
       // let requestMeResult = await requestMe(access_token);
       const userData = kakaoMeResult;
@@ -188,11 +186,9 @@ export default class LoginRouter extends APIRouter {
 
       this.logger.info(userRecord);
 
-      const resultCustomToken = admin
+      const resultCustomToken = await admin
         .auth()
         .createCustomToken(userId, {provider: 'KAKAO'});
-
-      this.logger.info(resultCustomToken);
 
       // return
 
