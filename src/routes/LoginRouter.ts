@@ -60,12 +60,15 @@ export default class LoginRouter extends APIRouter {
       console.log(
         'Requesting user profile from Kakao API server. ' + access_token,
       );
-      const kakaoMeResult = JSON.parse(
-        await axios.get(kakaoRequestMeUrl, {
-          method: 'GET',
-          headers: {Authorization: 'Bearer ' + access_token},
-        }),
-      );
+
+      const kakaoMeResult = await axios.get(kakaoRequestMeUrl, {
+        method: 'GET',
+        headers: {Authorization: 'Bearer ' + access_token},
+      });
+
+      this.logger.info(kakaoMeResult.data);
+      
+      // const kakaoMeResult = JSON.parse(kakaoResult.data);
       // let requestMeResult = await requestMe(access_token);
       const userData = kakaoMeResult.data;
 
