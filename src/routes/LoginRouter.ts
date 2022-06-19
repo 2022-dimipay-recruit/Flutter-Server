@@ -42,6 +42,50 @@ const fbCredential: ServiceAccount = {
   //     : '',
 };
 
+interface KakaoMeResult {
+  id: number;
+  has_signed_up?: boolean;
+  connected_at?: string;
+  synched_at?: string;
+  properties?: {
+    nickname: string;
+    profile_image: string;
+    thumbnail_image: string;
+  };
+  kakao_account?: {
+    profile_needs_agreement?: boolean;
+    profile_nickname_needs_agreement?: boolean;
+    profile_image_needs_agreement?: boolean;
+    profile?: {
+      nickname?: string;
+      thumbnail_image_url?: string;
+      profile_image_url?: string;
+      is_default_image?: boolean;
+    };
+    name_needs_agreement?: boolean;
+    name?: string;
+    has_email?: boolean;
+    email_needs_agreement?: boolean;
+    is_email_valid?: boolean;
+    is_email_verified?: boolean;
+    email?: string;
+    age_range_needs_agreement?: boolean;
+    age_range?: string;
+    birthyear_needs_agreement?: boolean;
+    birthyear?: number;
+    birthday_needs_agreement?: boolean;
+    birthday?: string;
+    birthday_type?: string;
+    gender_needs_agreement?: boolean;
+    gender?: string;
+    phone_number_needs_agreement?: boolean;
+    phone_number?: string;
+    ci_needs_agreement?: boolean;
+    ci?: string;
+    ci_authenticated_at?: string;
+  };
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(fbCredential),
 });
@@ -61,19 +105,34 @@ export default class LoginRouter extends APIRouter {
         'Requesting user profile from Kakao API server. ' + access_token,
       );
 
-      const kakaoMeResult = await axios.get(kakaoRequestMeUrl, {
-        method: 'GET',
-        headers: {Authorization: 'Bearer ' + access_token},
-      });
+      let kakaoMeResult: KakaoMeResult;
 
-      this.logger.info(kakaoMeResult.data);
-      
+      try {
+        kakaoMeResult = (
+          await axios.get(kakaoRequestMeUrl, {
+            method: 'GET',
+            headers: {Authorization: 'Bearer ' + access_token},
+          })
+        ).data;
+      } catch (error) {
+        this.logger.error(error);
+        context.body = {
+          status: 'failed',
+          data: {
+            message: 'Failed to get user profile from Kakao API server.',
+          },
+        };
+        return;
+      }
+
+      this.logger.info(kakaoMeResult);
+
       // const kakaoMeResult = JSON.parse(kakaoResult.data);
       // let requestMeResult = await requestMe(access_token);
-      const userData = kakaoMeResult.data;
+      const userData = kakaoMeResult;
 
       const userId = `kakao:${userData.id}`;
-      if (!userId) {
+      if (!userData.id) {
         context.body = {
           status: 'failed',
           data: {
@@ -81,16 +140,13 @@ export default class LoginRouter extends APIRouter {
           },
         };
         return;
-        // return response
-        //   .status(404)
-        //   .send({message: 'There was no user with the given access token.'});
       }
 
       let nickname = null;
       let profileImage = null;
       if (userData.properties) {
         nickname = userData.properties.nickname;
-        profileImage = userData.properties.profile_image;
+        profileImage = userData.properties?.profile_image;
       }
 
       //! Firebase 특성상 email 필드는 필수이다.
@@ -100,14 +156,14 @@ export default class LoginRouter extends APIRouter {
         uid: userId,
         provider: 'KAKAO',
         displayName: nickname,
-        email: userData.kakao_account.email,
+        email: userData.kakao_account?.email,
         photoURL: '',
       };
 
       if (nickname) {
         updateParams.displayName = nickname;
       } else {
-        updateParams.displayName = userData.kakao_account.email;
+        updateParams.displayName = userData.kakao_account?.email || '';
       }
       if (profileImage) {
         updateParams.photoURL = profileImage;
@@ -120,12 +176,12 @@ export default class LoginRouter extends APIRouter {
       let userRecord: null | UserRecord = null;
 
       try {
-        userRecord = await admin.auth().getUserByEmail(updateParams.email);
+        if (updateParams.email)
+          userRecord = await admin.auth().getUserByEmail(updateParams.email);
       } catch (error: any) {
         if (error.code || error.code === 'auth/user-not-found') {
           userRecord = await admin.auth().createUser(updateParams);
-        }
-        throw error;
+        } else throw error;
       }
 
       this.logger.info(userRecord);
