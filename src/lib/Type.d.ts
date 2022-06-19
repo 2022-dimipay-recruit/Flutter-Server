@@ -1,4 +1,17 @@
 import {ParameterizedContext} from 'koa';
+import {REQUIRED_ENVIRONMENT_VARIABLE_NAMES} from './Environment';
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv
+      extends Record<
+        typeof REQUIRED_ENVIRONMENT_VARIABLE_NAMES[number],
+        string
+      > {
+      NODE_ENV: 'development' | 'production';
+    }
+  }
+}
 
 export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
 

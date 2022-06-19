@@ -22,7 +22,10 @@ class MainServer {
     this.app = new Koa();
     this.router = new Router();
 
-    this.logger = new Logger('MainServer', true);
+    this.logger = new Logger({
+      name: 'MainServer',
+      storeInFile: true,
+    });
 
     this.app.use(bodyParser());
     this.app.use(cors());
