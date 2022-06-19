@@ -98,7 +98,7 @@ export default class LoginRouter extends APIRouter {
 
     this.logger = new Logger('LoginRouter', true);
 
-    this.router.post('/kakao', async (context: Context): Promise<void> => {
+    this.router.post('/kakao', async (context: Context, next) => {
       const {access_token} = context.request.body;
 
       this.logger.info(
@@ -114,6 +114,82 @@ export default class LoginRouter extends APIRouter {
             headers: {Authorization: `Bearer ${access_token}`},
           })
         ).data;
+
+        // const kakaoMeResult = JSON.parse(kakaoResult.data);
+        // let requestMeResult = await requestMe(access_token);
+        const userData = kakaoMeResult;
+
+        const userId = `kakao:${userData.id}`;
+        if (!userData.id) {
+          context.body = {
+            status: 'failed',
+            data: {
+              message: 'There was no user with the given access token.',
+            },
+          };
+          return;
+        }
+
+        let nickname = null;
+        let profileImage = null;
+        if (userData.properties) {
+          nickname = userData.properties.nickname;
+          profileImage = userData.properties?.profile_image;
+        }
+
+        //! Firebase 특성상 email 필드는 필수이다.
+        //! 사업자등록 이후 email을 필수옵션으로 설정할 수 있으니 (카카오 개발자 사이트) 꼭 설정하자.
+        //! 테스트 단계에서는 email을 동의하지 않고 로그인 할 경우 에러가 발생한다.
+        const updateParams = {
+          uid: userId,
+          provider: 'KAKAO',
+          displayName: nickname,
+          email: userData.kakao_account?.email,
+          photoURL: '',
+        };
+
+        if (nickname) {
+          updateParams.displayName = nickname;
+        } else {
+          updateParams.displayName = userData.kakao_account?.email || '';
+        }
+        if (profileImage) {
+          updateParams.photoURL = profileImage;
+        }
+
+        // await updateOrCreateUser(updateParams);
+
+        console.log('updating or creating a firebase user');
+
+        let userRecord: null | UserRecord = null;
+
+        try {
+          if (updateParams.email)
+            userRecord = await admin.auth().getUserByEmail(updateParams.email);
+        } catch (error: any) {
+          if (error.code || error.code === 'auth/user-not-found') {
+            userRecord = await admin.auth().createUser(updateParams);
+          } else throw error;
+        }
+
+        this.logger.info(userRecord);
+
+        const resultCustomToken = await admin
+          .auth()
+          .createCustomToken(userId, {provider: 'KAKAO'});
+
+        this.logger.info(`Custom token created : ${resultCustomToken}`);
+
+        // return
+
+        context.type = 'application/json; charset=utf-8';
+
+        context.body = {
+          status: 'success',
+          data: {
+            token: resultCustomToken,
+          },
+        };
       } catch (error) {
         this.logger.error(
           `Failed to get user profile from Kakao API server : ${access_token}`,
@@ -127,81 +203,7 @@ export default class LoginRouter extends APIRouter {
         return;
       }
 
-      // const kakaoMeResult = JSON.parse(kakaoResult.data);
-      // let requestMeResult = await requestMe(access_token);
-      const userData = kakaoMeResult;
-
-      const userId = `kakao:${userData.id}`;
-      if (!userData.id) {
-        context.body = {
-          status: 'failed',
-          data: {
-            message: 'There was no user with the given access token.',
-          },
-        };
-        return;
-      }
-
-      let nickname = null;
-      let profileImage = null;
-      if (userData.properties) {
-        nickname = userData.properties.nickname;
-        profileImage = userData.properties?.profile_image;
-      }
-
-      //! Firebase 특성상 email 필드는 필수이다.
-      //! 사업자등록 이후 email을 필수옵션으로 설정할 수 있으니 (카카오 개발자 사이트) 꼭 설정하자.
-      //! 테스트 단계에서는 email을 동의하지 않고 로그인 할 경우 에러가 발생한다.
-      const updateParams = {
-        uid: userId,
-        provider: 'KAKAO',
-        displayName: nickname,
-        email: userData.kakao_account?.email,
-        photoURL: '',
-      };
-
-      if (nickname) {
-        updateParams.displayName = nickname;
-      } else {
-        updateParams.displayName = userData.kakao_account?.email || '';
-      }
-      if (profileImage) {
-        updateParams.photoURL = profileImage;
-      }
-
-      // await updateOrCreateUser(updateParams);
-
-      console.log('updating or creating a firebase user');
-
-      let userRecord: null | UserRecord = null;
-
-      try {
-        if (updateParams.email)
-          userRecord = await admin.auth().getUserByEmail(updateParams.email);
-      } catch (error: any) {
-        if (error.code || error.code === 'auth/user-not-found') {
-          userRecord = await admin.auth().createUser(updateParams);
-        } else throw error;
-      }
-
-      this.logger.info(userRecord);
-
-      const resultCustomToken = await admin
-        .auth()
-        .createCustomToken(userId, {provider: 'KAKAO'});
-
-      this.logger.info(`Custom token created : ${resultCustomToken}`);
-
-      // return
-
-      context.body = {
-        status: 'success',
-        data: {
-          token: resultCustomToken,
-        },
-      };
-
-      return;
+      return await next();
     });
   }
 }
