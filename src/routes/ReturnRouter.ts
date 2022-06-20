@@ -13,7 +13,7 @@ export default class ReturnRouter extends APIRouter {
       storeInFile: true,
     });
 
-    this.router.get('/', (req, res, next): void => {
+    this.router.get('/', (req, res): void => {
       this.logger.info(req.query);
       res.send({
         status: 'success',
@@ -22,7 +22,7 @@ export default class ReturnRouter extends APIRouter {
 
       return;
     });
-    this.router.post('/', (req, res, next): void => {
+    this.router.post('/', (req, res): void => {
       this.logger.info(req.query);
       res.send({
         status: 'success',

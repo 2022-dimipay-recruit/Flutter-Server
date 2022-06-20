@@ -100,7 +100,7 @@ export default class LoginRouter extends APIRouter {
       storeInFile: true,
     });
 
-    this.router.post('/kakao', async (req, res, next) => {
+    this.router.post('/kakao', async (req, res) => {
       const {access_token} = req.body;
 
       this.logger.info(

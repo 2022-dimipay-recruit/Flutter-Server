@@ -1,9 +1,3 @@
-// import Koa from 'koa';
-// import Router from 'koa-router';
-// import bodyParser from 'koa-bodyparser';
-// import cors from '@koa/cors';
-// import helmet from 'koa-helmet';
-
 import Express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -15,6 +9,7 @@ import AuthRouter from './routes/AuthRouter';
 import UserRouter from './routes/UserRouter';
 import LoginRouter from './routes/LoginRouter';
 import Logger from './lib/Logger';
+import LogMiddleware from './middlewares/LogMiddleware';
 
 class MainServer {
   private app: Express.Application;
@@ -34,42 +29,7 @@ class MainServer {
     this.app.use(Express.urlencoded({extended: true}));
     this.app.use(cors());
     this.app.use(helmet());
-    this.app.use((req, res, next: () => void): void => {
-      if (res.headersSent) {
-        this.logger.info(
-          (req.ip.charAt(0) !== ':' ? req.ips[0] : '172.0.0.1') +
-            ' "' +
-            req.method +
-            ' ' +
-            decodeURIComponent(req.url) +
-            ' HTTP/' +
-            req.httpVersion +
-            '" ' +
-            res.statusCode +
-            ' "' +
-            res.header('user-agent') +
-            '"',
-        );
-      } else {
-        res.on('finish', () => {
-          this.logger.info(
-            (req.ip.charAt(0) !== ':' ? req.ips[0] : '172.0.0.1') +
-              ' "' +
-              req.method +
-              ' ' +
-              decodeURIComponent(req.url) +
-              ' HTTP/' +
-              req.httpVersion +
-              '" ' +
-              res.statusCode +
-              ' "' +
-              req.header('user-agent') +
-              '"',
-          );
-        });
-      }
-      next();
-    });
+    this.app.use(new LogMiddleware().use);
 
     this.createRoutes();
 

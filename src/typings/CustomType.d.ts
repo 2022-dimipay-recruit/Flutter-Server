@@ -1,5 +1,5 @@
 // import {ParameterizedContext} from 'koa';
-import {REQUIRED_ENVIRONMENT_VARIABLE_NAMES} from './Environment';
+import {REQUIRED_ENVIRONMENT_VARIABLE_NAMES} from '../lib/Environment';
 
 declare global {
   namespace NodeJS {

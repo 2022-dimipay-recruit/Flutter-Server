@@ -2,7 +2,7 @@ import {appendFile} from 'fs/promises';
 import {DateTime} from 'luxon';
 import {join} from 'path';
 import {inspect} from 'util';
-import {LogLevel} from './Type';
+import {LogLevel} from '../typings/CustomType';
 
 /**
  * @class Logger
