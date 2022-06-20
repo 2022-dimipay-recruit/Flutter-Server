@@ -8,36 +8,44 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(uuid())
-  link           String
-  nickname       String
-  email          String
-  anonyQuestions AnonymousPost[]
-  comuQuestions  CommunityPost[]
+  id           String    @id @default(uuid())
+  link         String    @unique
+  nickname     String
+  email        String
+  profileImage String
+  description  String
+  followers    Follows[] @relation("follower")
+  following    Follows[] @relation("following")
+  myPost       Post[]    @relation("author")
+  receivePost  Post[]    @relation("reveiver")
+  lovePost     Post[]
 }
 
-model CommunityPost {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  authorId  String
-  isAnony   Boolean
-  author    User     @relation(fields: [authorId], references: [id])
+model Follows {
+  followerId  String
+  followingId String
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  following   User   @relation("following", fields: [followingId], references: [id])
+
+  @@id([followerId, followingId])
+  @@index([followingId], map: "Follows_followingId_fkey")
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isAnony     Boolean
+  isCommunity Boolean
+  reveiverId  String?
+  authorId    String
+  loveCount   Int      @default(0)
+  author      User     @relation("author", fields: [authorId], references: [id])
+  reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id])
+  lover       User[]
 
   @@index([authorId], map: "CommunityPost_authorId_fkey")
-}
-
-model AnonymousPost {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  authorId  String
-  isAnony   Boolean
-  author    User     @relation(fields: [authorId], references: [id])
-
-  @@index([authorId], map: "AnonymousPost_authorId_fkey")
+  @@index([reveiverId], map: "Post_reveiverId_fkey")
 }
