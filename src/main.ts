@@ -10,6 +10,7 @@ import UserRouter from './routes/UserRouter';
 import LoginRouter from './routes/LoginRouter';
 import Logger from './lib/Logger';
 import LogMiddleware from './middlewares/LogMiddleware';
+import DBMiddleware from './middlewares/DBMiddleware';
 
 class MainServer {
   private app: Express.Application;
@@ -29,7 +30,8 @@ class MainServer {
     this.app.use(Express.urlencoded({extended: true}));
     this.app.use(cors());
     this.app.use(helmet());
-    this.app.use(new LogMiddleware().use);
+    this.app.use(LogMiddleware());
+    this.app.use(DBMiddleware());
 
     this.createRoutes();
 

@@ -1,23 +1,19 @@
 import Express from 'express';
 import Logger from '../lib/Logger';
 
-export default class LogMiddleware {
-  private logger: Logger;
+const logger = new Logger({
+  name: 'MainServer',
+  storeInFile: true,
+});
 
-  constructor() {
-    this.logger = new Logger({
-      name: 'MainServer',
-      storeInFile: true,
-    });
-  }
-
-  public use(
+export default function LogMiddleware() {
+  return (
     req: Express.Request,
     res: Express.Response,
     next: () => void,
-  ): void {
+  ): void => {
     if (res.headersSent) {
-      this.logger.info(
+      logger.info(
         (req.ip.charAt(0) !== ':' ? req.ips[0] : '172.0.0.1') +
           ' "' +
           req.method +
@@ -33,7 +29,7 @@ export default class LogMiddleware {
       );
     } else {
       res.on('finish', () => {
-        this.logger.info(
+        logger.info(
           (req.ip.charAt(0) !== ':' ? req.ips[0] : '172.0.0.1') +
             ' "' +
             req.method +
@@ -50,5 +46,5 @@ export default class LogMiddleware {
       });
     }
     next();
-  }
+  };
 }

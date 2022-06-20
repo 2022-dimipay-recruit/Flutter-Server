@@ -1,15 +1,15 @@
+import Express from 'express';
 import {PrismaClient} from '@prisma/client';
 
-export default class DBMiddleware {
-  private static prismaClient: PrismaClient = new PrismaClient();
+const prismaClient = new PrismaClient();
 
-  public use(
+export default function DBMiddleware() {
+  return (
     req: Express.Request,
     res: Express.Response,
     next: () => void,
-  ): void {
-    req.prismaClient = DBMiddleware.prismaClient;
-
+  ): void => {
+    req.prismaClient = prismaClient;
     next();
-  }
+  };
 }
