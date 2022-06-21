@@ -144,7 +144,7 @@ export default class {
                       take: condition.page.size,
                       orderBy: {
                         // @ts-expect-error typescript's fault
-                        link: condition.page.order === 'desc' ? 'desc' : 'asc',
+                        id: condition.page.order === 'desc' ? 'desc' : 'asc',
                       },
                     })
                     .then(resolve)
