@@ -57,12 +57,7 @@ export default class {
           typeof userCondition.id === 'string' ||
           typeof userCondition.link === 'string'
         ) {
-          if (
-            !(
-              typeof userCondition.id === 'string' &&
-              typeof userCondition.link === 'string'
-            )
-          ) {
+          if (typeof userCondition.id !== typeof userCondition.link) {
             client
               .findFirst({
                 select: {
