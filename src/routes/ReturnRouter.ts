@@ -23,7 +23,7 @@ export default class ReturnRouter extends APIRouter {
       return;
     });
     this.router.post('/', (req, res): void => {
-      this.logger.info(req.query);
+      this.logger.info(req.body);
       res.send({
         status: 'success',
         data: [req.body],
