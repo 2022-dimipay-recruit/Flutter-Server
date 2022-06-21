@@ -152,10 +152,12 @@ export default class PostController {
       postId?: string;
       page?: {size: number; index: number; order?: 'asc' | 'desc'};
     },
-  ): Promise<Post | Post[]> {
-    return new Promise<Post | Post[]>(
+  ): Promise<(Post & {author: User}) | (Post & {author: User})[]> {
+    return new Promise<(Post & {author: User}) | (Post & {author: User})[]>(
       (
-        resolve: (value: Post | Post[]) => void,
+        resolve: (
+          value: (Post & {author: User}) | (Post & {author: User})[],
+        ) => void,
         reject: (reason?: any) => void,
       ) => {
         if (typeof condition.page === 'object') {
@@ -183,6 +185,9 @@ export default class PostController {
                         // @ts-expect-error typescript's fault
                         id: condition.page.order === 'desc' ? 'desc' : 'asc',
                       },
+                      include: {
+                        author: true,
+                      },
                     })
                     .then(resolve)
                     .catch(reject);
@@ -202,8 +207,11 @@ export default class PostController {
               where: {
                 id: condition.postId,
               },
+              include: {
+                author: true,
+              },
             })
-            .then((post: Post | null) => {
+            .then((post: (Post & {author: User}) | null) => {
               if (post !== null) {
                 resolve(post);
               } else {
