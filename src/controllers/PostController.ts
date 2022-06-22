@@ -95,10 +95,12 @@ export default class PostController {
     client: PrismaClient['post'],
     postId: string,
     post: Partial<Pick<Post, 'title' | 'content'>>,
-  ): Promise<Partial<Pick<Post, 'title' | 'content'>>> {
-    return new Promise<Partial<Pick<Post, 'title' | 'content'>>>(
+  ): Promise<Partial<Pick<Post, 'title' | 'content' | 'id'>>> {
+    return new Promise<Partial<Pick<Post, 'title' | 'content' | 'id'>>>(
       (
-        resolve: (value: Partial<Pick<Post, 'title' | 'content'>>) => void,
+        resolve: (
+          value: Partial<Pick<Post, 'title' | 'content' | 'id'>>,
+        ) => void,
         reject: (reason?: any) => void,
       ) => {
         client
@@ -125,7 +127,7 @@ export default class PostController {
 
               client
                 .update({
-                  select: postFieldConditions,
+                  select: Object.assign({id: true}, postFieldConditions),
                   where: {
                     id: postId,
                   },
