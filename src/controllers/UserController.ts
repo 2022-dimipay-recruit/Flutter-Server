@@ -63,11 +63,7 @@ export default class {
                 select: {
                   id: true,
                 },
-                where: {
-                  [Object.keys(
-                    userCondition,
-                  ).pop() as keyof typeof userCondition]: true,
-                },
+                where: userCondition,
               })
               .then((_user: Pick<User, 'id'> | null) => {
                 if (_user !== null) {
@@ -84,9 +80,15 @@ export default class {
 
                   client
                     .update({
-                      select: userFieldConditions,
+                      select: Object.assign(
+                        {
+                          id: true,
+                          link: true,
+                        },
+                        userFieldConditions,
+                      ),
                       where: {
-                        id: userCondition['id'],
+                        id: _user.id,
                       },
                       data: user,
                     })
