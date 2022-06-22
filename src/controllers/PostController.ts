@@ -249,4 +249,205 @@ export default class PostController {
       },
     );
   }
+
+  public static lovePost(
+    client: PrismaClient['post'],
+    postId: string,
+    userId: string,
+  ): Promise<void> {
+    return new Promise<void>(
+      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
+        client
+          .findUnique({
+            where: {
+              id: postId,
+            },
+          })
+          .then((post: Post | null) => {
+            if (post !== null) {
+              client
+                .update({
+                  where: {
+                    id: postId,
+                  },
+                  data: {
+                    loveCount: post.loveCount + 1,
+                    lover: {
+                      connect: [
+                        {
+                          id: userId,
+                        },
+                      ],
+                    },
+                  },
+                  include: {
+                    lover: true,
+                  },
+                })
+                .then(() => resolve())
+                .catch(reject);
+            } else reject('Invalid post information');
+          });
+      },
+    );
+  }
+
+  public static unlovePost(
+    client: PrismaClient['post'],
+    postId: string,
+    userId: string,
+  ): Promise<void> {
+    return new Promise<void>(
+      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
+        client
+          .findUnique({
+            where: {
+              id: postId,
+            },
+          })
+          .then((post: Post | null) => {
+            if (post !== null) {
+              client
+                .update({
+                  where: {
+                    id: postId,
+                  },
+                  data: {
+                    loveCount: post.loveCount - 1,
+                    lover: {
+                      disconnect: [
+                        {
+                          id: userId,
+                        },
+                      ],
+                    },
+                  },
+                  include: {
+                    lover: true,
+                  },
+                })
+                .then(() => resolve())
+                .catch(reject);
+            } else reject('Invalid post information');
+          });
+      },
+    );
+  }
+
+  public static bookmarkPost(
+    client: PrismaClient['post'],
+    postId: string,
+    userId: string,
+  ): Promise<void> {
+    return new Promise<void>(
+      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
+        client
+          .findUnique({
+            where: {
+              id: postId,
+            },
+          })
+          .then((post: Post | null) => {
+            if (post !== null) {
+              client
+                .update({
+                  where: {
+                    id: postId,
+                  },
+                  data: {
+                    bookmaker: {
+                      connect: [
+                        {
+                          id: userId,
+                        },
+                      ],
+                    },
+                  },
+                  include: {
+                    bookmaker: true,
+                  },
+                })
+                .then(() => resolve())
+                .catch(reject);
+            } else reject('Invalid post information');
+          });
+      },
+    );
+  }
+
+  public static unmarkPost(
+    client: PrismaClient['post'],
+    postId: string,
+    userId: string,
+  ): Promise<void> {
+    return new Promise<void>(
+      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
+        client
+          .findUnique({
+            where: {
+              id: postId,
+            },
+          })
+          .then((post: Post | null) => {
+            if (post !== null) {
+              client
+                .update({
+                  where: {
+                    id: postId,
+                  },
+                  data: {
+                    bookmaker: {
+                      disconnect: [
+                        {
+                          id: userId,
+                        },
+                      ],
+                    },
+                  },
+                  include: {
+                    bookmaker: true,
+                  },
+                })
+                .then(() => resolve())
+                .catch(reject);
+            } else reject('Invalid post information');
+          });
+      },
+    );
+  }
+
+  public static reportPost(
+    client: PrismaClient['report'],
+    postId: string,
+    reason: string,
+    reporterId: string,
+  ): Promise<void> {
+    return new Promise<void>(
+      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
+        client
+          .create({
+            data: {
+              id: postId,
+              reason: reason,
+              post: {
+                connect: {
+                  id: postId,
+                },
+              },
+              user: {
+                connect: {
+                  id: reporterId,
+                },
+              },
+            },
+            include: {
+              post: true,
+              user: true,
+            },
+          })
+          .then(() => resolve())
+          .catch(reject);
+      },
+    );
+  }
 }
