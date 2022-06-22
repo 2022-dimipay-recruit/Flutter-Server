@@ -22,29 +22,42 @@ export default class UserRouter extends APIRouter {
             'profileImage',
             'description',
           ],
+          optionalProperties: ['googleUid', 'kakaoUid'],
         }),
       }),
       (req, res): void => {
-        UserController.create(req.prismaClient.user, req.body)
-          .then((userId: User['id']) => {
-            res.send({
-              status: 'success',
-              data: {
-                userId: userId,
-              },
-            });
+        if (
+          typeof req.body.googleUid === 'string' ||
+          typeof req.body.kakaoUid === 'string'
+        ) {
+          UserController.create(req.prismaClient.user, req.body)
+            .then((userId: User['id']) => {
+              res.send({
+                status: 'success',
+                data: {
+                  userId: userId,
+                },
+              });
 
-            return;
-          })
-          .catch((error: any) => {
-            res.status(400);
-            res.send({
-              status: 'fail',
-              data: {
-                message: error.message,
-              },
+              return;
+            })
+            .catch((error: any) => {
+              res.status(400);
+              res.send({
+                status: 'fail',
+                data: {
+                  message: error.message,
+                },
+              });
             });
+        } else {
+          res.send({
+            status: 'fail',
+            data: {
+              message: 'Invalid social information',
+            },
           });
+        }
 
         return;
       },

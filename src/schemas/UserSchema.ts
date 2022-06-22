@@ -12,5 +12,7 @@ export default new Schema({
   email: schema.string().format('email'),
   profileImage: schema.string().format('url'),
   description: schema.string(),
-  // TODO: make googleUid, kakaoUid schema
+  googleUid: schema.string().pattern(/^[a-zA-Z0-9]+$/),
+  kakaoUid: schema.string().pattern(/^kakao:[0-9]+$/),
+  //type: schema.string().enum(['G', 'K']),
 });
