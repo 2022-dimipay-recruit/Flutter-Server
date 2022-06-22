@@ -21,7 +21,9 @@ model User {
   following    Follows[] @relation("following")
   myPost       Post[]    @relation("author")
   receivePost  Post[]    @relation("reveiver")
-  lovePost     Post[]
+  lovePost     Post[]    @relation("love")
+  bookmarkPost Post[]    @relation("bookmark")
+  reports      Report[]  @relation("reportuser")
 }
 
 model Follows {
@@ -47,8 +49,20 @@ model Post {
   loveCount   Int      @default(0)
   author      User     @relation("author", fields: [authorId], references: [id])
   reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id])
-  lover       User[]
+  lover       User[]   @relation("love")
+  bookmaker   User[]   @relation("bookmark")
+  reports     Report[] @relation("reportpost")
 
   @@index([authorId], map: "CommunityPost_authorId_fkey")
   @@index([reveiverId], map: "Post_reveiverId_fkey")
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation("reportpost", fields: [postId], references: [id])
+  user      User     @relation("reportuser", fields: [userId], references: [id])
 }
