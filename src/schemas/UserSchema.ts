@@ -12,4 +12,5 @@ export default new Schema({
   email: schema.string().format('email'),
   profileImage: schema.string().format('url'),
   description: schema.string(),
+  // TODO: make googleUid, kakaoUid schema
 });

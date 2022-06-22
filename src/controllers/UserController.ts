@@ -45,7 +45,9 @@ export default class {
   }
   public static update(
     client: PrismaClient['user'],
-    userCondition: Partial<Pick<User, 'id' | 'link'>>,
+    userCondition: Partial<
+      Pick<User, 'id' | 'link' | 'gooogleUid' | 'kakaoUid'>
+    >,
     user: Partial<Omit<User, 'id'>>,
   ): Promise<Partial<User>> {
     return new Promise<Partial<User>>(
@@ -55,9 +57,11 @@ export default class {
       ) => {
         if (
           typeof userCondition.id === 'string' ||
-          typeof userCondition.link === 'string'
+          typeof userCondition.link === 'string' ||
+          typeof userCondition.gooogleUid === 'string' ||
+          typeof userCondition.kakaoUid === 'string'
         ) {
-          if (typeof userCondition.id !== typeof userCondition.link) {
+          if (Object.keys(userCondition).length === 1) {
             client
               .findFirst({
                 select: {
@@ -84,6 +88,8 @@ export default class {
                         {
                           id: true,
                           link: true,
+                          gooogleUid: true,
+                          kakaoUid: true,
                         },
                         userFieldConditions,
                       ),
@@ -114,7 +120,7 @@ export default class {
   public static read(
     client: PrismaClient['user'],
     condition: {
-      user?: Partial<Pick<User, 'id' | 'link'>>;
+      user?: Partial<Pick<User, 'id' | 'link' | 'gooogleUid' | 'kakaoUid'>>;
       page?: {size: number; index: number; order?: 'asc' | 'desc'};
     },
   ): Promise<User | User[]> {
@@ -162,19 +168,32 @@ export default class {
             })
             .catch(reject);
         } else if (typeof condition.user === 'object') {
-          client
-            .findFirst({
-              where: condition.user,
-            })
-            .then((user: User | null) => {
-              if (user !== null) {
-                resolve(user);
-              } else {
-                reject(new Error('Invalid user information'));
-              }
+          if (
+            typeof condition.user.id === 'string' ||
+            typeof condition.user.link === 'string' ||
+            typeof condition.user.gooogleUid === 'string' ||
+            typeof condition.user.kakaoUid === 'string'
+          ) {
+            if (Object.keys(condition.user).length === 1) {
+              client
+                .findFirst({
+                  where: condition.user,
+                })
+                .then((user: User | null) => {
+                  if (user !== null) {
+                    resolve(user);
+                  } else {
+                    reject(new Error('Invalid user information'));
+                  }
 
-              return;
-            });
+                  return;
+                });
+            } else {
+              reject(new Error('Duplicated user condition'));
+            }
+          } else {
+            reject(new Error('Lack of user information'));
+          }
         } else {
           reject(new Error('Lack of user information'));
         }
