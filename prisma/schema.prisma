@@ -15,12 +15,10 @@ model User {
   profileImage String
   description  String
   createdAt    DateTime  @default(now())
-  googleLinkId String?
   googleLinked Boolean
-  gooogleUid   String?
-  kakaoLinkId  String?
+  gooogleUid   String?   @unique
   kakaoLinked  Boolean
-  kakaoUid     String?
+  kakaoUid     String?   @unique
   followers    Follows[] @relation("follower")
   following    Follows[] @relation("following")
   myPost       Post[]    @relation("author")
