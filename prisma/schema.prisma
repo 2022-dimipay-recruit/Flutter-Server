@@ -14,6 +14,13 @@ model User {
   email        String
   profileImage String
   description  String
+  createdAt    DateTime  @default(now())
+  googleLinkId String?
+  googleLinked Boolean
+  gooogleUid   String?
+  kakaoLinkId  String?
+  kakaoLinked  Boolean
+  kakaoUid     String?
   followers    Follows[] @relation("follower")
   following    Follows[] @relation("following")
   myPost       Post[]    @relation("author")
