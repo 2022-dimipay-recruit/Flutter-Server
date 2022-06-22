@@ -14,6 +14,7 @@ export default (options: ValidationOptions) => {
       validate(req.params);
 
       if (Array.isArray(validate.errors) && validate.errors.length !== 0) {
+        res.status(400);
         res.send({
           status: 'fail',
           data: {
@@ -34,6 +35,7 @@ export default (options: ValidationOptions) => {
       validate(req.query);
 
       if (Array.isArray(validate.errors) && validate.errors.length !== 0) {
+        res.status(400);
         res.send({
           status: 'fail',
           data: {
@@ -55,6 +57,8 @@ export default (options: ValidationOptions) => {
       validate(req.body);
 
       if (Array.isArray(validate.errors) && validate.errors.length !== 0) {
+        res.status(400);
+
         res.send({
           status: 'fail',
           data: {

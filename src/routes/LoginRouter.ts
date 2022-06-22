@@ -123,6 +123,7 @@ export default class LoginRouter extends APIRouter {
 
         const userId = `kakao:${userData.id}`;
         if (!userData.id) {
+          res.status(400);
           res.send({
             status: 'fail',
             data: {
@@ -194,6 +195,8 @@ export default class LoginRouter extends APIRouter {
         this.logger.error(
           `Failed to get user profile from Kakao API server : ${access_token}`,
         );
+
+        res.status(400);
         res.send({
           status: 'fail',
           data: {

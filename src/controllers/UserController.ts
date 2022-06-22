@@ -123,10 +123,10 @@ export default class {
       user?: Partial<Pick<User, 'id' | 'link' | 'gooogleUid' | 'kakaoUid'>>;
       page?: {size: number; index: number; order?: 'asc' | 'desc'};
     },
-  ): Promise<User | User[]> {
-    return new Promise<User | User[]>(
+  ): Promise<User | Omit<User, 'googleUid' | 'kakaoUid'>[]> {
+    return new Promise<User | Omit<User, 'googleUid' | 'kakaoUid'>[]>(
       (
-        resolve: (value: User | User[]) => void,
+        resolve: (value: User | Omit<User, 'googleUid' | 'kakaoUid'>[]) => void,
         reject: (reason?: any) => void,
       ) => {
         if (typeof condition.page === 'object') {
@@ -146,6 +146,15 @@ export default class {
                 ) {
                   client
                     .findMany({
+                      select: {
+                        id: true,
+                        link: true,
+                        nickname: true,
+                        email: true,
+                        profileImage: true,
+                        description: true,
+                        createdAt: true,
+                      },
                       // @ts-expect-error typescript's fault
                       skip: condition.page.size * condition.page.index,
                       // @ts-expect-error typescript's fault
@@ -155,6 +164,7 @@ export default class {
                         id: condition.page.order === 'desc' ? 'desc' : 'asc',
                       },
                     })
+                    // @ts-expect-error prisma's fault
                     .then(resolve)
                     .catch(reject);
                 } else {

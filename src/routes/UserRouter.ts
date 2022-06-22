@@ -1,6 +1,7 @@
 import {User} from '@prisma/client';
 import UserController from '../controllers/UserController';
 import APIRouter from '../lib/APIRouter';
+import getAuthenticationMiddleware from '../middlewares/AuthenticationMiddleware';
 import getValidationMiddleware from '../middlewares/ValidationMiddleware';
 import pageSchema from '../schemas/PageSchema';
 import userSchema from '../schemas/UserSchema';
@@ -51,6 +52,7 @@ export default class UserRouter extends APIRouter {
               });
             });
         } else {
+          res.status(400);
           res.send({
             status: 'fail',
             data: {
@@ -65,6 +67,7 @@ export default class UserRouter extends APIRouter {
 
     this.router.get(
       '/',
+      getAuthenticationMiddleware(),
       getValidationMiddleware({
         query: pageSchema,
       }),
@@ -87,7 +90,8 @@ export default class UserRouter extends APIRouter {
                 | 'desc') || 'asc',
           },
         })
-          .then((user: User | User[]) => {
+          // @ts-expect-error asdasd
+          .then((user: Omit<User, 'googleUid' | 'kakaoUid'>[]) => {
             res.send({
               status: 'success',
               data: user,
@@ -111,6 +115,7 @@ export default class UserRouter extends APIRouter {
 
     this.router.patch(
       '/id/:id',
+      getAuthenticationMiddleware(),
       getValidationMiddleware({
         params: userSchema.getObjectSchema({requiredProperties: ['id']}),
         body: userSchema.getObjectSchema({
@@ -120,18 +125,150 @@ export default class UserRouter extends APIRouter {
             'link',
             'nickname',
             'profileImage',
+            'googleUid',
+            'kakaoUid',
           ],
         }),
       }),
       (req, res): void => {
-        UserController.update(req.prismaClient.user, req.params, req.body)
-          .then((user: Partial<User>) => {
+        if (req.params.id === req.userId) {
+          UserController.update(req.prismaClient.user, req.params, req.body)
+            .then((user: Partial<User>) => {
+              res.send({
+                status: 'success',
+                data: [user],
+              });
+
+              return;
+            })
+            .catch((error: any) => {
+              res.status(400);
+              res.send({
+                status: 'fail',
+                data: {
+                  message: error.message,
+                },
+              });
+            });
+        } else {
+          res.status(401);
+          res.send({
+            status: 'fail',
+            data: {
+              message: 'Unauthorized user',
+            },
+          });
+        }
+
+        return;
+      },
+    );
+
+    this.router.get(
+      '/id/:id',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res): void => {
+        UserController.read(req.prismaClient.user, {user: req.params})
+          // @ts-expect-error asdasd
+          .then((user: User) => {
             res.send({
               status: 'success',
-              data: [user],
+              data: [
+                Object.assign(
+                  user,
+                  user.id === req.userId
+                    ? undefined
+                    : {googleUid: undefined, kakaoUid: undefined},
+                ),
+              ],
             });
 
             return;
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+          });
+
+        return;
+      },
+    );
+
+    //this.router.delete(
+    //  '/id/:id',
+    //  getValidationMiddleware({
+    //    params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+    //  }),
+    //  (req, res): void => {
+    //    res.status(501);
+    //    res.send({
+    //      status: 'success',
+    //      data: null,
+    //    });
+
+    //    return;
+    //  },
+    //);
+
+    this.router.patch(
+      '/link/:link',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['link']}),
+        body: userSchema.getObjectSchema({
+          optionalProperties: [
+            'description',
+            'email',
+            'link',
+            'nickname',
+            'profileImage',
+            'googleUid',
+            'kakaoUid',
+          ],
+        }),
+      }),
+      (req, res): void => {
+        UserController.read(req.prismaClient.user, {
+          user: req.params,
+        })
+          // @ts-expect-error asdf
+          .then((user: User) => {
+            if (user.id === req.userId) {
+              UserController.update(req.prismaClient.user, req.params, req.body)
+                .then((user: Partial<User>) => {
+                  res.send({
+                    status: 'success',
+                    data: [user],
+                  });
+
+                  return;
+                })
+                .catch((error: any) => {
+                  res.status(400);
+                  res.send({
+                    status: 'fail',
+                    data: {
+                      message: error.message,
+                    },
+                  });
+                });
+            } else {
+              res.status(401);
+              res.send({
+                status: 'fail',
+                data: {
+                  message: 'Unauthorized user',
+                },
+              });
+            }
           })
           .catch((error: any) => {
             res.status(400);
@@ -148,16 +285,24 @@ export default class UserRouter extends APIRouter {
     );
 
     this.router.get(
-      '/id/:id',
+      '/link/:link',
       getValidationMiddleware({
-        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+        params: userSchema.getObjectSchema({requiredProperties: ['link']}),
       }),
       (req, res): void => {
         UserController.read(req.prismaClient.user, {user: req.params})
-          .then((user: User | User[]) => {
+          // @ts-expect-error asdasd
+          .then((user: User) => {
             res.send({
               status: 'success',
-              data: [user],
+              data: [
+                Object.assign(
+                  user,
+                  user.id === req.userId
+                    ? undefined
+                    : {googleUid: undefined, kakaoUid: undefined},
+                ),
+              ],
             });
 
             return;
@@ -176,26 +321,130 @@ export default class UserRouter extends APIRouter {
       },
     );
 
-    this.router.delete(
-      '/id/:id',
+    //this.router.delete(
+    //  '/link/:link',
+    //  getValidationMiddleware({
+    //    params: userSchema.getObjectSchema({requiredProperties: ['link']}),
+    //  }),
+    //  (req, res): void => {
+    //    res.status(501);
+    //    res.send({
+    //      status: 'success',
+    //      data: null,
+    //    });
+
+    //    return;
+    //  },
+    //);
+
+    this.router.patch(
+      '/googleUid/:googleUid',
+      getAuthenticationMiddleware(),
       getValidationMiddleware({
-        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+        params: userSchema.getObjectSchema({requiredProperties: ['googleUid']}),
+        body: userSchema.getObjectSchema({
+          optionalProperties: [
+            'description',
+            'email',
+            'link',
+            'nickname',
+            'profileImage',
+            'googleUid',
+            'kakaoUid',
+          ],
+        }),
       }),
       (req, res): void => {
-        res.status(501);
-        res.send({
-          status: 'success',
-          data: null,
-        });
+        UserController.read(req.prismaClient.user, {
+          user: req.params,
+        })
+          // @ts-expect-error asdf
+          .then((user: User) => {
+            if (user.id === req.userId) {
+              UserController.update(req.prismaClient.user, req.params, req.body)
+                .then((user: Partial<User>) => {
+                  res.send({
+                    status: 'success',
+                    data: [user],
+                  });
+
+                  return;
+                })
+                .catch((error: any) => {
+                  res.status(400);
+                  res.send({
+                    status: 'fail',
+                    data: {
+                      message: error.message,
+                    },
+                  });
+                });
+            } else {
+              res.status(401);
+              res.send({
+                status: 'fail',
+                data: {
+                  message: 'Unauthorized user',
+                },
+              });
+            }
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+          });
+
+        return;
+      },
+    );
+
+    this.router.get(
+      '/googleUid/:googleUid',
+      getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['link']}),
+      }),
+      (req, res): void => {
+        UserController.read(req.prismaClient.user, {user: req.params})
+          // @ts-expect-error asdasd
+          .then((user: User) => {
+            res.send({
+              status: 'success',
+              data: [
+                Object.assign(
+                  user,
+                  user.id === req.userId
+                    ? undefined
+                    : {googleUid: undefined, kakaoUid: undefined},
+                ),
+              ],
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+          });
 
         return;
       },
     );
 
     this.router.patch(
-      '/link/:link',
+      '/kakaoUid/:kakaoUid',
+      getAuthenticationMiddleware(),
       getValidationMiddleware({
-        params: userSchema.getObjectSchema({requiredProperties: ['link']}),
+        params: userSchema.getObjectSchema({requiredProperties: ['kakaoUid']}),
         body: userSchema.getObjectSchema({
           optionalProperties: [
             'description',
@@ -203,18 +452,45 @@ export default class UserRouter extends APIRouter {
             'link',
             'nickname',
             'profileImage',
+            'googleUid',
+            'kakaoUid',
           ],
         }),
       }),
       (req, res): void => {
-        UserController.update(req.prismaClient.user, req.params, req.body)
-          .then((user: Partial<User>) => {
-            res.send({
-              status: 'success',
-              data: [user],
-            });
+        UserController.read(req.prismaClient.user, {
+          user: req.params,
+        })
+          // @ts-expect-error asdf
+          .then((user: User) => {
+            if (user.id === req.userId) {
+              UserController.update(req.prismaClient.user, req.params, req.body)
+                .then((user: Partial<User>) => {
+                  res.send({
+                    status: 'success',
+                    data: [user],
+                  });
 
-            return;
+                  return;
+                })
+                .catch((error: any) => {
+                  res.status(400);
+                  res.send({
+                    status: 'fail',
+                    data: {
+                      message: error.message,
+                    },
+                  });
+                });
+            } else {
+              res.status(401);
+              res.send({
+                status: 'fail',
+                data: {
+                  message: 'Unauthorized user',
+                },
+              });
+            }
           })
           .catch((error: any) => {
             res.status(400);
@@ -231,16 +507,24 @@ export default class UserRouter extends APIRouter {
     );
 
     this.router.get(
-      '/link/:link',
+      '/kakaoUid/:kakaoUid',
       getValidationMiddleware({
         params: userSchema.getObjectSchema({requiredProperties: ['link']}),
       }),
       (req, res): void => {
         UserController.read(req.prismaClient.user, {user: req.params})
-          .then((user: User | User[]) => {
+          // @ts-expect-error asdasd
+          .then((user: User) => {
             res.send({
               status: 'success',
-              data: [user],
+              data: [
+                Object.assign(
+                  user,
+                  user.id === req.userId
+                    ? undefined
+                    : {googleUid: undefined, kakaoUid: undefined},
+                ),
+              ],
             });
 
             return;
@@ -254,22 +538,6 @@ export default class UserRouter extends APIRouter {
               },
             });
           });
-
-        return;
-      },
-    );
-
-    this.router.delete(
-      '/link/:link',
-      getValidationMiddleware({
-        params: userSchema.getObjectSchema({requiredProperties: ['link']}),
-      }),
-      (req, res): void => {
-        res.status(501);
-        res.send({
-          status: 'success',
-          data: null,
-        });
 
         return;
       },
