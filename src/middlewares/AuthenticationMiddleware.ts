@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from 'express';
 import jsonWebToken, {Jwt} from 'jsonwebtoken';
 import storage from '../lib/Storage';
 
-export default () => {
+export default function getAuthenticationMiddleware() {
   return (req: Request, res: Response, next: NextFunction) => {
     if (req.headers.authorization?.startsWith('Bearer ')) {
       if (storage.has(req.headers.authorization.split('.').pop())) {
@@ -52,4 +52,4 @@ export default () => {
       });
     }
   };
-};
+}
