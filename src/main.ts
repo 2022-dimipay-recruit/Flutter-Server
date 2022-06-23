@@ -51,9 +51,9 @@ class MainServer {
   }
 
   private createRoutes() {
-    this.router.use('/answer', new AnswerRouter().expressRouter);
+    this.router.use('/answers', new AnswerRouter().expressRouter);
     this.router.use('/auth', new AuthRouter().expressRouter);
-    this.router.use('/follow', new FollowRouter().expressRouter);
+    this.router.use('/follows', new FollowRouter().expressRouter);
     this.router.use('/login', new LoginRouter().expressRouter);
     this.router.use('/posts', new PostRouter().expressRouter);
     this.router.use('/return', new ReturnRouter().expressRouter);

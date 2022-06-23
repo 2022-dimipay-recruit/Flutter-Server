@@ -13,7 +13,7 @@ export default class extends APIRouter {
     super();
 
     this.router.post(
-      '/:id/follower',
+      '/:id/follow',
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         params: userSchema.getObjectSchema({
@@ -67,7 +67,7 @@ export default class extends APIRouter {
     );
 
     this.router.delete(
-      '/:id/follower',
+      '/:id/unfollow',
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         params: userSchema.getObjectSchema({
