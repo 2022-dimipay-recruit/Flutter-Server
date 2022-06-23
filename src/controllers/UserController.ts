@@ -111,11 +111,12 @@ export default class {
                     .then(resolve)
                     .catch(reject);
                 } else {
-                  reject('Invalid user information');
+                  reject(new Error('Invalid user information'));
                 }
 
                 return;
-              });
+              })
+              .catch(reject);
           } else {
             reject(new Error('Duplicated userCondition'));
           }
