@@ -17,7 +17,6 @@ export default class extends APIRouter {
       '/public',
       getAuthenticationMiddleware(),
       getValidationMiddleware({
-        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
         body: postSchema.getObjectSchema({
           requiredProperties: ['title', 'content', 'isAnony'],
         }),
@@ -101,7 +100,7 @@ export default class extends APIRouter {
     );
 
     this.router.post(
-      '/userId/:userId',
+      '/userId/:id',
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         params: userSchema.getObjectSchema({requiredProperties: ['id']}),
@@ -113,7 +112,7 @@ export default class extends APIRouter {
         PostController.createPrivate(
           req.prismaClient.post,
           req.userId as string,
-          req.params.userId,
+          req.params.id,
           req.body,
         )
           .then((post: Pick<Post, 'id'>) => {
@@ -139,9 +138,10 @@ export default class extends APIRouter {
     );
 
     this.router.get(
-      '/userId/:userId',
+      '/userId/:id',
       getAuthenticationMiddleware(),
       getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
         query: pageSchema,
       }),
       (req, res): void => {
@@ -162,7 +162,7 @@ export default class extends APIRouter {
                 | 'asc'
                 | 'desc') || 'asc',
             isCommunity: false,
-            userId: req.params.userId,
+            userId: req.params.id,
           },
         })
           .then(
