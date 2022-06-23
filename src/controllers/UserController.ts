@@ -9,16 +9,26 @@ export default class {
     return new Promise(
       (resolve: (value: string) => void, reject: (reason?: any) => void) => {
         client
-          .findFirst({
+          .findMany({
             select: {
               id: true,
             },
             where: {
-              link: user.link,
+              OR: [
+                {
+                  link: user.link,
+                },
+                {
+                  gooogleUid: user.gooogleUid,
+                },
+                {
+                  kakaoUid: user.kakaoUid,
+                },
+              ],
             },
           })
-          .then((userWithLink: Pick<User, 'id'> | null) => {
-            if (userWithLink === null) {
+          .then((users: Pick<User, 'id'>[]) => {
+            if (users.length === 0) {
               client
                 .create({
                   select: {
@@ -33,7 +43,7 @@ export default class {
                 })
                 .catch(reject);
             } else {
-              reject(new Error('Duplicated user link'));
+              reject(new Error('Duplicated unique user information'));
             }
 
             return;
