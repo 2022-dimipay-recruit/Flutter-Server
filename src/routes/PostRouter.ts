@@ -258,7 +258,7 @@ export default class extends APIRouter {
                   return;
                 });
             } else {
-              res.send(400);
+              res.send(401);
               res.send({
                 status: 'fail',
                 data: {
@@ -317,7 +317,7 @@ export default class extends APIRouter {
                   return;
                 });
             } else {
-              res.send(400);
+              res.send(401);
               res.send({
                 status: 'fail',
                 data: {
