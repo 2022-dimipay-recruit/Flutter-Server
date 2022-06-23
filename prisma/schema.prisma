@@ -15,8 +15,9 @@ model User {
   profileImage String
   description  String
   createdAt    DateTime  @default(now())
-  gooogleUid   String?   @unique
   kakaoUid     String?   @unique
+  googleUid    String?   @unique
+  myAnswer     Answer[]  @relation("answerauthor")
   followers    Follows[] @relation("follower")
   following    Follows[] @relation("following")
   myPost       Post[]    @relation("author")
@@ -49,12 +50,27 @@ model Post {
   loveCount   Int      @default(0)
   author      User     @relation("author", fields: [authorId], references: [id])
   reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id])
+  answers     Answer[] @relation("answer")
   reports     Report[] @relation("reportpost")
   bookmaker   User[]   @relation("bookmark")
   lover       User[]   @relation("love")
 
   @@index([authorId], map: "CommunityPost_authorId_fkey")
   @@index([reveiverId], map: "Post_reveiverId_fkey")
+}
+
+model Answer {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  postId    String
+  author    User     @relation("answerauthor", fields: [authorId], references: [id])
+  post      Post     @relation("answer", fields: [postId], references: [id])
+
+  @@index([authorId], map: "Answer_authorId_fkey")
+  @@index([postId], map: "Answer_postId_fkey")
 }
 
 model Report {

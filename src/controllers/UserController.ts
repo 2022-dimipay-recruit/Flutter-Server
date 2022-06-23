@@ -19,7 +19,7 @@ export default class {
                   link: user.link,
                 },
                 {
-                  gooogleUid: user.gooogleUid,
+                  googleUid: user.googleUid,
                 },
                 {
                   kakaoUid: user.kakaoUid,
@@ -56,7 +56,7 @@ export default class {
   public static update(
     client: PrismaClient['user'],
     userCondition: Partial<
-      Pick<User, 'id' | 'link' | 'gooogleUid' | 'kakaoUid'>
+      Pick<User, 'id' | 'link' | 'googleUid' | 'kakaoUid'>
     >,
     user: Partial<Omit<User, 'id'>>,
   ): Promise<Partial<User>> {
@@ -68,7 +68,7 @@ export default class {
         if (
           typeof userCondition.id === 'string' ||
           typeof userCondition.link === 'string' ||
-          typeof userCondition.gooogleUid === 'string' ||
+          typeof userCondition.googleUid === 'string' ||
           typeof userCondition.kakaoUid === 'string'
         ) {
           if (Object.keys(userCondition).length === 1) {
@@ -98,7 +98,7 @@ export default class {
                         {
                           id: true,
                           link: true,
-                          gooogleUid: true,
+                          googleUid: true,
                           kakaoUid: true,
                         },
                         userFieldConditions,
@@ -131,7 +131,7 @@ export default class {
   public static read(
     client: PrismaClient['user'],
     condition: {
-      user?: Partial<Pick<User, 'id' | 'link' | 'gooogleUid' | 'kakaoUid'>>;
+      user?: Partial<Pick<User, 'id' | 'link' | 'googleUid' | 'kakaoUid'>>;
       page?: {size: number; index: number; order?: 'asc' | 'desc'};
     },
   ): Promise<User | Omit<User, 'googleUid' | 'kakaoUid'>[]> {
@@ -175,7 +175,6 @@ export default class {
                         id: condition.page.order === 'desc' ? 'desc' : 'asc',
                       },
                     })
-                    // @ts-expect-error prisma's fault
                     .then(resolve)
                     .catch(reject);
                 } else {
@@ -192,7 +191,7 @@ export default class {
           if (
             typeof condition.user.id === 'string' ||
             typeof condition.user.link === 'string' ||
-            typeof condition.user.gooogleUid === 'string' ||
+            typeof condition.user.googleUid === 'string' ||
             typeof condition.user.kakaoUid === 'string'
           ) {
             if (Object.keys(condition.user).length === 1) {
