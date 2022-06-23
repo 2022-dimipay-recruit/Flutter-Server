@@ -19,6 +19,7 @@ jobs:
           touch .env
           echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" >> .env
           echo "PORT=\"${{ secrets.PORT }}\"" >> .env
+          echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
           echo "FB_TYPE=\"${{ secrets.FB_TYPE }}\"" >> .env
           echo "FB_PROJECT_ID=\"${{ secrets.FB_PROJECT_ID }}\"" >> .env
           echo "FB_PRIVATE_KEY_ID=\"${{ secrets.FB_PRIVATE_KEY_ID }}\"" >> .env
