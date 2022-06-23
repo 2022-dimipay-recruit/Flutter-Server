@@ -1,4 +1,4 @@
-import {PrismaClient, Post, User} from '@prisma/client';
+import {PrismaClient, Post, User, Prisma} from '@prisma/client';
 import {Page} from '../typings/CustomType';
 
 export default class PostController {
@@ -153,7 +153,7 @@ export default class PostController {
     client: PrismaClient['post'],
     condition: {
       postId?: string;
-      page?: Page;
+      page?: Page & {userId?: string; isCommunity: boolean};
     },
   ): Promise<(Post & {author: User}) | (Post & {author: User})[]> {
     return new Promise<(Post & {author: User}) | (Post & {author: User})[]>(
@@ -164,8 +164,28 @@ export default class PostController {
         reject: (reason?: any) => void,
       ) => {
         if (typeof condition.page === 'object') {
+          const _condition: Prisma.PostWhereInput = {
+            isCommunity: condition.page.isCommunity,
+          };
+
+          if (!condition.page.isCommunity) {
+            if (typeof condition.page.userId === 'string') {
+              _condition.authorId = condition.page.userId;
+            } else {
+              reject(new Error('Invalid post condition'));
+
+              return;
+            }
+          } else if (typeof condition.page.userId === 'string') {
+            reject(new Error('Invalid post condition'));
+
+            return;
+          }
+
           client
-            .count()
+            .count({
+              where: _condition,
+            })
             .then((postCount: number) => {
               if (postCount > 0) {
                 if (
@@ -180,6 +200,7 @@ export default class PostController {
                 ) {
                   client
                     .findMany({
+                      where: _condition,
                       // @ts-expect-error typescript's fault
                       skip: condition.page.size * condition.page.index,
                       // @ts-expect-error typescript's fault
