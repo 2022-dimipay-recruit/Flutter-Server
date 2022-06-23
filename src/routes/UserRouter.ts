@@ -67,7 +67,6 @@ export default class UserRouter extends APIRouter {
 
     this.router.get(
       '/',
-      getAuthenticationMiddleware(),
       getValidationMiddleware({
         query: pageSchema,
       }),
