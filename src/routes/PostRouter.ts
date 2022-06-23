@@ -35,6 +35,7 @@ export default class extends APIRouter {
             });
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -122,6 +123,7 @@ export default class extends APIRouter {
             });
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -204,6 +206,7 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -244,6 +247,7 @@ export default class extends APIRouter {
                   return;
                 })
                 .catch((error: any) => {
+                  res.send(400);
                   res.send({
                     status: 'fail',
                     data: {
@@ -254,6 +258,7 @@ export default class extends APIRouter {
                   return;
                 });
             } else {
+              res.send(400);
               res.send({
                 status: 'fail',
                 data: {
@@ -265,6 +270,7 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -300,6 +306,7 @@ export default class extends APIRouter {
                   return;
                 })
                 .catch((error: any) => {
+                  res.send(400);
                   res.send({
                     status: 'fail',
                     data: {
@@ -310,6 +317,7 @@ export default class extends APIRouter {
                   return;
                 });
             } else {
+              res.send(400);
               res.send({
                 status: 'fail',
                 data: {
@@ -321,6 +329,155 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+
+            return;
+          });
+
+        return;
+      },
+    );
+
+    this.router.post(
+      '/:id/love',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: postSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res) => {
+        PostController.lovePost(
+          req.prismaClient.post,
+          req.params.id,
+          req.userId as string,
+        )
+          .then(() => {
+            res.send({
+              status: 'success',
+              data: {
+                id: req.params.id,
+              },
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.send(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+
+            return;
+          });
+
+        return;
+      },
+    );
+
+    this.router.delete(
+      '/:id/love',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: postSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res) => {
+        PostController.unlovePost(
+          req.prismaClient.post,
+          req.params.id,
+          req.userId as string,
+        )
+          .then(() => {
+            res.send({
+              status: 'success',
+              data: null,
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.send(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+
+            return;
+          });
+
+        return;
+      },
+    );
+
+    this.router.post(
+      '/:id/bookmark',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: postSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res) => {
+        PostController.bookmarkPost(
+          req.prismaClient.post,
+          req.params.id,
+          req.userId as string,
+        )
+          .then(() => {
+            res.send({
+              status: 'success',
+              data: {
+                id: req.params.id,
+              },
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.send(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+
+            return;
+          });
+
+        return;
+      },
+    );
+
+    this.router.delete(
+      '/:id/bookmark',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: postSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res) => {
+        PostController.unmarkPost(
+          req.prismaClient.post,
+          req.params.id,
+          req.userId as string,
+        )
+          .then(() => {
+            res.send({
+              status: 'success',
+              data: null,
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {

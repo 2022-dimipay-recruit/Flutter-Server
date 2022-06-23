@@ -170,7 +170,7 @@ export default class PostController {
 
           if (!condition.page.isCommunity) {
             if (typeof condition.page.userId === 'string') {
-              _condition.authorId = condition.page.userId;
+              _condition.reveiverId = condition.page.userId;
             } else {
               reject(new Error('Invalid post condition'));
 
