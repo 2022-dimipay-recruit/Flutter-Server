@@ -1,4 +1,5 @@
 import {PrismaClient, Post, User} from '@prisma/client';
+import {Page} from '../typings/CustomType';
 
 export default class PostController {
   public static createPublic(
@@ -152,7 +153,7 @@ export default class PostController {
     client: PrismaClient['post'],
     condition: {
       postId?: string;
-      page?: {size: number; index: number; order?: 'asc' | 'desc'};
+      page?: Page;
     },
   ): Promise<(Post & {author: User}) | (Post & {author: User})[]> {
     return new Promise<(Post & {author: User}) | (Post & {author: User})[]>(

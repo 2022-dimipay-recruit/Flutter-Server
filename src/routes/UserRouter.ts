@@ -7,8 +7,8 @@ import pageSchema from '../schemas/PageSchema';
 import userSchema from '../schemas/UserSchema';
 import {} from '../typings/ExpressRequest';
 
-// ReturnRouter
-export default class UserRouter extends APIRouter {
+// UserRouter
+export default class extends APIRouter {
   constructor() {
     super();
 

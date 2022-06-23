@@ -7,8 +7,8 @@ import jsonWebToken from 'jsonwebtoken';
 import storage from '../lib/Storage';
 import getAuthenticationMiddleware from '../middlewares/AuthenticationMiddleware';
 
-// ReturnRouter
-export default class AuthRouter extends APIRouter {
+// AuthRouter
+export default class extends APIRouter {
   constructor() {
     super();
 

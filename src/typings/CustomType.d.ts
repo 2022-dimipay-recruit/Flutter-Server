@@ -61,6 +61,12 @@ export interface ValidationOptions {
   query?: ObjectSchema | ExtendedSchema;
 }
 
+export interface Page {
+  size: number;
+  index: number;
+  order?: 'asc' | 'desc';
+}
+
 // export type Context = ParameterizedContext<
 //   {
 //     body: string;

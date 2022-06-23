@@ -1,4 +1,5 @@
 import {PrismaClient, User} from '@prisma/client';
+import {Page} from '../typings/CustomType';
 
 // UserController
 export default class {
@@ -132,7 +133,7 @@ export default class {
     client: PrismaClient['user'],
     condition: {
       user?: Partial<Pick<User, 'id' | 'link' | 'googleUid' | 'kakaoUid'>>;
-      page?: {size: number; index: number; order?: 'asc' | 'desc'};
+      page?: Page;
     },
   ): Promise<User | Omit<User, 'googleUid' | 'kakaoUid'>[]> {
     return new Promise<User | Omit<User, 'googleUid' | 'kakaoUid'>[]>(

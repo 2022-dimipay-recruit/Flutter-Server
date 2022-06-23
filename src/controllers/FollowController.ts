@@ -1,4 +1,5 @@
 import {PrismaClient} from '@prisma/client';
+import {Page} from '../typings/CustomType';
 
 export default class FollowController {
   /**
@@ -73,18 +74,44 @@ export default class FollowController {
    * @param followedId 팔로우받는 사람의 id를 넘깁니다.
    * @returns 팔로우 정보 배열을 넘깁니다.
    */
-  public static async readFollower(client: PrismaClient, followedId: string) {
+  public static async readFollower(
+    client: PrismaClient,
+    followedId: string,
+    page: Page,
+  ) {
     try {
-      const follows = await client.follows.findMany({
+      const followCount = await client.follows.count({
         where: {
           followingId: followedId,
         },
-        include: {
-          follower: true,
-          following: true,
-        },
       });
-      return follows;
+
+      if (followCount > 0) {
+        if (
+          page.index < Math.ceil(followCount / page.size) &&
+          page.index >= 0
+        ) {
+          const follows = await client.follows.findMany({
+            where: {
+              followingId: followedId,
+            },
+            include: {
+              follower: true,
+              following: true,
+            },
+            skip: page.size * page.index,
+            take: page.size,
+            orderBy: {
+              followerId: page.order === 'desc' ? 'desc' : 'asc',
+            },
+          });
+          return follows;
+        } else {
+          throw new Error('Invalid page information');
+        }
+      } else {
+        return [];
+      }
     } catch (err) {
       throw err;
     }
@@ -97,18 +124,45 @@ export default class FollowController {
    * @param followerId 팔로우하는 사람의 id를 넘깁니다.
    * @returns 팔로우 정보 배열을 넘깁니다.
    */
-  public static async readFollowed(client: PrismaClient, followerId: string) {
+  public static async readFollowed(
+    client: PrismaClient,
+    followerId: string,
+    page: Page,
+  ) {
     try {
-      const follows = await client.follows.findMany({
+      const followCount = await client.follows.count({
         where: {
           followerId: followerId,
         },
-        include: {
-          follower: true,
-          following: true,
-        },
       });
-      return follows;
+
+      if (followCount > 0) {
+        if (
+          page.index < Math.ceil(followCount / page.size) &&
+          page.index >= 0
+        ) {
+          const follows = await client.follows.findMany({
+            where: {
+              followerId: followerId,
+            },
+            include: {
+              follower: true,
+              following: true,
+            },
+            skip: page.size * page.index,
+            take: page.size,
+            orderBy: {
+              followingId: page.order === 'desc' ? 'desc' : 'asc',
+            },
+          });
+
+          return follows;
+        } else {
+          throw new Error('Invalid page information');
+        }
+      } else {
+        return [];
+      }
     } catch (err) {
       throw err;
     }
