@@ -65,8 +65,8 @@ model Answer {
   content   String
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  authorId  String         @id @default(uuid())
-  postId    String         @id @default(uuid())
+  authorId  String
+  postId    String
   author    User           @relation("answerauthor", fields: [authorId], references: [id])
   post      Post           @relation("answer", fields: [postId], references: [id])
   reports   AnswerReport[] @relation("reportanswer")
@@ -77,8 +77,8 @@ model Answer {
 
 model Report {
   id        String   @id @default(uuid())
-  postId    String   @id @default(uuid())
-  userId    String   @id @default(uuid())
+  postId    String
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reason    String
@@ -91,8 +91,8 @@ model Report {
 
 model AnswerReport {
   id        String   @id @default(uuid())
-  answerId  String   @id @default(uuid())
-  userId    String   @id @default(uuid())
+  answerId  String
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reason    String
