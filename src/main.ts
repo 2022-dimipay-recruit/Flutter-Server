@@ -1,6 +1,7 @@
 import Express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
 
 import './lib/Environment';
 
@@ -12,6 +13,7 @@ import Logger from './lib/Logger';
 import LogMiddleware from './middlewares/LogMiddleware';
 import DBMiddleware from './middlewares/DBMiddleware';
 import FollowRouter from './routes/FollowRouter';
+import UploadRouter from './routes/UploadRouter';
 
 class MainServer {
   private app: Express.Application;
@@ -29,6 +31,10 @@ class MainServer {
 
     this.app.use(Express.json());
     this.app.use(Express.urlencoded({extended: true}));
+    this.app.use(
+      '/images',
+      Express.static(path.join(__dirname, '..', 'uploads')),
+    );
     this.app.use(cors());
     this.app.use(helmet());
     this.app.use(LogMiddleware());
@@ -48,6 +54,7 @@ class MainServer {
     this.router.use('/users', new UserRouter().expressRouter);
     this.router.use('/login', new LoginRouter().expressRouter);
     this.router.use('/follow', new FollowRouter().expressRouter);
+    this.router.use('/uploads', new UploadRouter().expressRouter);
 
     this.router.get('/', (req, res): void => {
       res.send({
