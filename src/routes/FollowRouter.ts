@@ -37,6 +37,7 @@ export default class extends APIRouter {
                 return;
               })
               .catch((error: any) => {
+                res.send(400);
                 res.send({
                   status: 'fail',
                   data: {
@@ -50,6 +51,7 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -89,6 +91,7 @@ export default class extends APIRouter {
                 return;
               })
               .catch((error: any) => {
+                res.send(400);
                 res.send({
                   status: 'fail',
                   data: {
@@ -102,6 +105,7 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -157,6 +161,7 @@ export default class extends APIRouter {
                 },
               )
               .catch((error: any) => {
+                res.send(400);
                 res.send({
                   status: 'fail',
                   data: {
@@ -170,6 +175,7 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
@@ -225,6 +231,7 @@ export default class extends APIRouter {
                 },
               )
               .catch((error: any) => {
+                res.send(400);
                 res.send({
                   status: 'fail',
                   data: {
@@ -238,6 +245,7 @@ export default class extends APIRouter {
             return;
           })
           .catch((error: any) => {
+            res.send(400);
             res.send({
               status: 'fail',
               data: {
