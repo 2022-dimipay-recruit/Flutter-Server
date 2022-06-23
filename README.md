@@ -10,6 +10,6 @@
 이 레포지토리는 아래와 같은 라이브러리를 이용해 만들어졌습니다.
 
 - [Node.js](https://nodejs.org) + [TypeScript](https://www.typescriptlang.org) : 설명이 뭐가 필요하나요?
-- [Koa](https://github.com/koajs/koa) : express의 대체제. 깔끔하고 빠르고, 좋습니다.
+- [Express](https://github.com/expressjs/express) : 근본 웹 프레임워크.
 - [Prisma](https://www.prisma.io) + [MySQL](https://www.mysql.com) : 근본 SQL과 신세대 ORM의 조합. 생각보다 편해요 :)
-- [Luxon](https://moment.github.io/luxon/#/) : moment가 deprecated되며 나온 대체제. 
+- [Luxon](https://moment.github.io/luxon/#/) : moment가 deprecated되며 나온 대체제.
