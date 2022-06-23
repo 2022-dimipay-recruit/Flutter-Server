@@ -23,7 +23,7 @@ export default class UploadRouter extends APIRouter {
         this.logger.info(req.body);
         res.send({
           status: 'success',
-          data: [req.file],
+          data: req.file,
         });
 
         return;

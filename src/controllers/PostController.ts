@@ -5,7 +5,7 @@ export default class PostController {
   public static createPublic(
     client: PrismaClient['post'],
     authorId: string,
-    post: Pick<Post, 'title' | 'content' | 'isAnony'>,
+    post: Pick<Post, 'title' | 'content' | 'isAnony' | 'imageLink'>,
   ): Promise<Pick<Post, 'id'>> {
     return new Promise<Pick<Post, 'id'>>(
       (
@@ -44,7 +44,7 @@ export default class PostController {
     client: PrismaClient['post'],
     authorId: string,
     receiverId: string,
-    post: Pick<Post, 'title' | 'content' | 'isAnony'>,
+    post: Pick<Post, 'title' | 'content' | 'isAnony' | 'imageLink'>,
   ): Promise<Pick<Post, 'id'>> {
     return new Promise<Pick<Post, 'id'>>(
       (

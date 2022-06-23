@@ -11,4 +11,5 @@ export default new Schema<keyof Omit<Post, 'createdAt' | 'updatedAt'>>({
   reveiverId: schema.string().format('uuid'),
   authorId: schema.string().format('uuid'),
   loveCount: schema.integer(),
+  imageLink: schema.string(),
 });

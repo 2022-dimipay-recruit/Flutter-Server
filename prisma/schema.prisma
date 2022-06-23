@@ -48,6 +48,7 @@ model Post {
   isCommunity Boolean
   reveiverId  String?
   authorId    String
+  imageLink   String
   loveCount   Int      @default(0)
   author      User     @relation("author", fields: [authorId], references: [id])
   reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id])

@@ -18,7 +18,7 @@ export default class extends APIRouter {
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         body: postSchema.getObjectSchema({
-          requiredProperties: ['title', 'content', 'isAnony'],
+          requiredProperties: ['title', 'content', 'isAnony', 'imageLink'],
         }),
       }),
       (req, res): void => {
@@ -105,7 +105,7 @@ export default class extends APIRouter {
       getValidationMiddleware({
         params: userSchema.getObjectSchema({requiredProperties: ['id']}),
         body: postSchema.getObjectSchema({
-          requiredProperties: ['title', 'content', 'isAnony'],
+          requiredProperties: ['title', 'content', 'isAnony', 'imageLink'],
         }),
       }),
       (req, res): void => {
