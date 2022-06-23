@@ -7,7 +7,7 @@ import getValidationMiddleware from '../middlewares/ValidationMiddleware';
 import pageSchema from '../schemas/PageSchema';
 import userSchema from '../schemas/UserSchema';
 
-// AuthRouter
+// FollowRouter
 export default class extends APIRouter {
   constructor() {
     super();
