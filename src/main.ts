@@ -55,7 +55,7 @@ class MainServer {
     this.router.use('/auth', new AuthRouter().expressRouter);
     this.router.use('/follow', new FollowRouter().expressRouter);
     this.router.use('/login', new LoginRouter().expressRouter);
-    this.router.use('/post', new PostRouter().expressRouter);
+    this.router.use('/posts', new PostRouter().expressRouter);
     this.router.use('/return', new ReturnRouter().expressRouter);
     this.router.use('/uploads', new UploadRouter().expressRouter);
     this.router.use('/users', new UserRouter().expressRouter);
