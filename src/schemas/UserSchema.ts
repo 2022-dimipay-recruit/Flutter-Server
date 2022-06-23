@@ -1,7 +1,8 @@
 import {Schema} from '../lib/Schema';
 import schema from 'fluent-json-schema';
+import {User} from '@prisma/client';
 
-export default new Schema({
+export default new Schema<keyof Omit<User, 'createdAt'>>({
   id: schema.string().format('uuid'),
   link: schema
     .string()

@@ -11,6 +11,7 @@ import LoginRouter from './routes/LoginRouter';
 import Logger from './lib/Logger';
 import LogMiddleware from './middlewares/LogMiddleware';
 import DBMiddleware from './middlewares/DBMiddleware';
+import FollowRouter from './routes/FollowRouter';
 
 class MainServer {
   private app: Express.Application;
@@ -46,6 +47,7 @@ class MainServer {
     this.router.use('/auth', new AuthRouter().expressRouter);
     this.router.use('/users', new UserRouter().expressRouter);
     this.router.use('/login', new LoginRouter().expressRouter);
+    this.router.use('/follow', new FollowRouter().expressRouter);
 
     this.router.get('/', (req, res): void => {
       res.send({
