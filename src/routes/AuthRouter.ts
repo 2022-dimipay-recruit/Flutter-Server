@@ -96,7 +96,7 @@ export default class extends APIRouter {
           ),
       }),
       (req, res): void => {
-        if (storage.has(req.body.refreshToken.split('.').pop())) {
+        if (storage.has(req.body.refreshToken?.split('.').pop())) {
           res.send({
             status: 'success',
             data: {
