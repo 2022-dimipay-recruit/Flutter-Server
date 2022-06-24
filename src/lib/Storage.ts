@@ -1,23 +1,29 @@
-//export default new Set<string>();
+import IORedis from 'ioredis';
 
 class Storage {
-  private registry: Set<string> = new Set<string>();
+  private registry: IORedis = new IORedis({
+    db: 0,
+    host: process.env.REDIS_URL,
+    port: Number.parseInt(process.env.REDIS_PORT, 10),
+  });
 
-  public add(value?: string): void {
+  public async add(value?: string): Promise<void> {
     if (typeof value === 'string') {
-      this.registry.add(value);
+      await this.registry.set(value, '1');
     }
 
     return;
   }
 
-  public has(value?: string): boolean {
-    return typeof value === 'string' && this.registry.has(value);
+  public async has(value?: string): Promise<boolean> {
+    return (
+      typeof value === 'string' && (await this.registry.get(value)) === '1'
+    );
   }
 
-  public delete(value?: string): void {
+  public async delete(value?: string): Promise<void> {
     if (typeof value === 'string') {
-      this.registry.delete(value);
+      await this.registry.del([value]);
     }
 
     return;

@@ -2,6 +2,8 @@ import {config} from 'dotenv';
 
 export const REQUIRED_ENVIRONMENT_VARIABLE_NAMES = [
   'DATABASE_URL',
+  'REDIS_URL',
+  'REDIS_PORT',
   'FB_TYPE',
   'FB_PROJECT_ID',
   'FB_PRIVATE_KEY_ID',
