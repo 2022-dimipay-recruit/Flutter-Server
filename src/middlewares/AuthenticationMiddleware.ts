@@ -38,7 +38,7 @@ export default function getAuthenticationMiddleware() {
         res.send({
           status: 'fail',
           data: {
-            message: 'Invalid authorization header type',
+            message: 'Unauthorized token',
           },
         });
       }

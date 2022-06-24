@@ -6,6 +6,7 @@ import userSchema from '../schemas/UserSchema';
 import jsonWebToken from 'jsonwebtoken';
 import storage from '../lib/Storage';
 import getAuthenticationMiddleware from '../middlewares/AuthenticationMiddleware';
+import schema from 'fluent-json-schema';
 
 // AuthRouter
 export default class extends APIRouter {
@@ -86,10 +87,16 @@ export default class extends APIRouter {
 
     this.router.post(
       '/token',
-      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        body: schema
+          .object()
+          .prop(
+            'refreshToken',
+            schema.string().pattern(/^(?:[\w-]*\.){2}[\w-]*$/),
+          ),
+      }),
       (req, res): void => {
-        // @ts-expect-error asdas
-        if (storage.has(req.headers.authorization.split('.').pop())) {
+        if (storage.has(req.body.refreshToken.split('.').pop())) {
           res.send({
             status: 'success',
             data: {
