@@ -53,6 +53,7 @@ export default class extends APIRouter {
                       expiresIn: '7d',
                     },
                   ),
+                  userId: user.id,
                 },
               });
             })
@@ -103,6 +104,7 @@ export default class extends APIRouter {
                   expiresIn: '7d',
                 },
               ),
+              userId: req.userId,
             },
           });
         } else {
