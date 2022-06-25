@@ -30,6 +30,8 @@ jobs:
           echo "FB_TOKEN_URI=\"${{ secrets.FB_TOKEN_URI }}\"" >> .env
           echo "FB_AUTH_PROVIDER_X509_CERT_URL=\"${{ secrets.FB_AUTH_PROVIDER_X509_CERT_URL }}\"" >> .env
           echo "FB_CLIENT_X509_CERT_URL=\"${{ secrets.FB_CLIENT_X509_CERT_URL }}\"" >> .env
+          echo "REDIS_URL=\"${{ secrets.REDIS_URL }}\"" >> .env
+          echo "REDIS_PORT=\"${{ secrets.REDIS_PORT }}\"" >> .env
           cat .env
 
       - name: create remote directory
