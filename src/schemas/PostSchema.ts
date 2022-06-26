@@ -13,4 +13,5 @@ export default new Schema<keyof Omit<Post, 'createdAt' | 'updatedAt'>>({
   loveCount: schema.integer(),
   imageLink: schema.string(),
   denied: schema.boolean(),
+  answerCount: schema.integer(),
 });

@@ -65,6 +65,7 @@ model Post {
   imageLink   String
   denied      Boolean  @default(false)
   loveCount   Int      @default(0)
+  answerCount Int      @default(0)
   author      User     @relation("author", fields: [authorId], references: [id])
   reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id])
   answers     Answer[] @relation("answer")

@@ -17,6 +17,12 @@ export default class AnswerController {
     isAnony: boolean,
   ) {
     try {
+      const post = await client.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+      if (post === null) throw new Error('게시글이 존재하지 않습니다.');
       const answer = await client.answer.create({
         data: {
           content: content,
@@ -37,6 +43,14 @@ export default class AnswerController {
           post: true,
         },
       });
+      await client.post.update({
+        where: {
+          id: postId,
+        },
+        data: {
+          answerCount: post.answerCount + 1,
+        },
+      });
       return answer;
     } catch (err) {
       throw err;
@@ -54,6 +68,17 @@ export default class AnswerController {
       const answer = await client.answer.delete({
         where: {
           id: answerId,
+        },
+        include: {
+          post: true,
+        },
+      });
+      await client.post.update({
+        where: {
+          id: answer.post.id,
+        },
+        data: {
+          answerCount: answer.post.answerCount - 1,
         },
       });
       return answer;
