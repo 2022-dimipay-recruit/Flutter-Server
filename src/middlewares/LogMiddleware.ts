@@ -18,7 +18,7 @@ export default function LogMiddleware() {
           ' "' +
           req.method +
           ' ' +
-          decodeURIComponent(req.url) +
+          req.originalUrl +
           ' HTTP/' +
           req.httpVersion +
           '" ' +
@@ -34,7 +34,7 @@ export default function LogMiddleware() {
             ' "' +
             req.method +
             ' ' +
-            decodeURIComponent(req.url) +
+            req.originalUrl +
             ' HTTP/' +
             req.httpVersion +
             '" ' +
