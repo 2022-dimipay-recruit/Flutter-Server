@@ -17,6 +17,20 @@ CREATE TABLE `User` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `Notifications` (
+    `id` VARCHAR(191) NOT NULL,
+    `linkedID` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `isRead` BOOLEAN NOT NULL DEFAULT false,
+    `userId` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `Notifications_linkedID_key`(`linkedID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Follows` (
     `followerId` VARCHAR(191) NOT NULL,
     `followingId` VARCHAR(191) NOT NULL,
@@ -37,6 +51,7 @@ CREATE TABLE `Post` (
     `reveiverId` VARCHAR(191) NULL,
     `authorId` VARCHAR(191) NOT NULL,
     `imageLink` VARCHAR(191) NOT NULL,
+    `denied` BOOLEAN NOT NULL DEFAULT false,
     `loveCount` INTEGER NOT NULL DEFAULT 0,
 
     INDEX `CommunityPost_authorId_fkey`(`authorId`),
@@ -50,6 +65,7 @@ CREATE TABLE `Answer` (
     `content` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `isAnony` BOOLEAN NOT NULL,
     `authorId` VARCHAR(191) NOT NULL,
     `postId` VARCHAR(191) NOT NULL,
 
@@ -103,6 +119,9 @@ CREATE TABLE `_love` (
     UNIQUE INDEX `_love_AB_unique`(`A`, `B`),
     INDEX `_love_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Notifications` ADD CONSTRAINT `Notifications_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Follows` ADD CONSTRAINT `Follows_followerId_fkey` FOREIGN KEY (`followerId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

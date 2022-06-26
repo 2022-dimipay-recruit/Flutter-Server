@@ -8,24 +8,36 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  link          String         @unique
+  id            String          @id @default(uuid())
+  link          String          @unique
   nickname      String
   email         String
   profileImage  String
   description   String
-  createdAt     DateTime       @default(now())
-  kakaoUid      String?        @unique
-  googleUid     String?        @unique
-  myAnswer      Answer[]       @relation("answerauthor")
-  answerReports AnswerReport[] @relation("answerreportuser")
-  followers     Follows[]      @relation("follower")
-  following     Follows[]      @relation("following")
-  myPost        Post[]         @relation("author")
-  receivePost   Post[]         @relation("reveiver")
-  reports       Report[]       @relation("reportuser")
-  bookmarkPost  Post[]         @relation("bookmark")
-  lovePost      Post[]         @relation("love")
+  createdAt     DateTime        @default(now())
+  kakaoUid      String?         @unique
+  googleUid     String?         @unique
+  myAnswer      Answer[]        @relation("answerauthor")
+  answerReports AnswerReport[]  @relation("answerreportuser")
+  followers     Follows[]       @relation("follower")
+  following     Follows[]       @relation("following")
+  myPost        Post[]          @relation("author")
+  receivePost   Post[]          @relation("reveiver")
+  reports       Report[]        @relation("reportuser")
+  bookmarkPost  Post[]          @relation("bookmark")
+  lovePost      Post[]          @relation("love")
+  notifications Notifications[] @relation("notificationuser")
+}
+
+model Notifications {
+  id        String   @id @default(uuid())
+  linkedID  String   @unique
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+  userId    String
+  user      User     @relation("notificationuser", fields: [userId], references: [id])
 }
 
 model Follows {
@@ -49,6 +61,7 @@ model Post {
   reveiverId  String?
   authorId    String
   imageLink   String
+  denied      Boolean  @default(false)
   loveCount   Int      @default(0)
   author      User     @relation("author", fields: [authorId], references: [id])
   reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id])
@@ -66,6 +79,7 @@ model Answer {
   content   String
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
+  isAnony   Boolean
   authorId  String
   postId    String
   author    User           @relation("answerauthor", fields: [authorId], references: [id])
