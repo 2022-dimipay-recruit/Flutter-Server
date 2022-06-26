@@ -491,5 +491,39 @@ export default class extends APIRouter {
         return;
       },
     );
+
+    this.router.post(
+      '/:id/deny',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: postSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res) => {
+        PostController.denyPost(req.prismaClient.post, req.params.id)
+          .then(() => {
+            res.send({
+              status: 'success',
+              data: {
+                id: req.params.id,
+              },
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.send(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+
+            return;
+          });
+
+        return;
+      },
+    );
   }
 }

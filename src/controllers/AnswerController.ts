@@ -14,11 +14,13 @@ export default class AnswerController {
     authorId: string,
     postId: string,
     content: string,
+    isAnony: boolean,
   ) {
     try {
       const answer = await client.answer.create({
         data: {
           content: content,
+          isAnony: isAnony,
           author: {
             connect: {
               id: authorId,

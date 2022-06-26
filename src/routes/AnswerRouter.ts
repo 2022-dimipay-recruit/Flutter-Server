@@ -14,7 +14,7 @@ export default class AnswerRouter extends APIRouter {
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         body: AnswerSchema.getObjectSchema({
-          requiredProperties: ['postId', 'content'],
+          requiredProperties: ['postId', 'content', 'isAnony'],
         }),
       }),
       (req, res) => {
@@ -23,6 +23,7 @@ export default class AnswerRouter extends APIRouter {
           req.userId as string,
           req.body.postId,
           req.body.content,
+          req.body.isAnony,
         )
           .then(answer => {
             res.send({

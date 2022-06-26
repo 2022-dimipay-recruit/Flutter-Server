@@ -472,4 +472,22 @@ export default class PostController {
       },
     );
   }
+
+  public static denyPost(client: PrismaClient['post'], postId: string) {
+    return new Promise<void>(
+      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
+        client
+          .update({
+            where: {
+              id: postId,
+            },
+            data: {
+              denied: true,
+            },
+          })
+          .then(() => resolve())
+          .catch(reject);
+      },
+    );
+  }
 }

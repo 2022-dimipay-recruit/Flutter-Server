@@ -21,12 +21,12 @@ model User {
   answerReports AnswerReport[]  @relation("answerreportuser")
   followers     Follows[]       @relation("follower")
   following     Follows[]       @relation("following")
+  notifications Notifications[] @relation("notificationuser")
   myPost        Post[]          @relation("author")
   receivePost   Post[]          @relation("reveiver")
   reports       Report[]        @relation("reportuser")
   bookmarkPost  Post[]          @relation("bookmark")
   lovePost      Post[]          @relation("love")
-  notifications Notifications[] @relation("notificationuser")
 }
 
 model Notifications {
@@ -38,6 +38,8 @@ model Notifications {
   isRead    Boolean  @default(false)
   userId    String
   user      User     @relation("notificationuser", fields: [userId], references: [id])
+
+  @@index([userId], map: "Notifications_userId_fkey")
 }
 
 model Follows {

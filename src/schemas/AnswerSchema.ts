@@ -7,4 +7,5 @@ export default new Schema<keyof Omit<Answer, 'createdAt' | 'updatedAt'>>({
   content: schema.string().minLength(1).maxLength(4000),
   authorId: schema.string().format('uuid'),
   postId: schema.string().format('uuid'),
+  isAnony: schema.boolean(),
 });
