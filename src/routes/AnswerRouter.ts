@@ -34,7 +34,7 @@ export default class AnswerRouter extends APIRouter {
             return;
           })
           .catch((error: any) => {
-            res.send(400);
+            res.status(400);
             res.send({
               status: 'fail',
               data: {
@@ -68,7 +68,7 @@ export default class AnswerRouter extends APIRouter {
             });
           })
           .catch((error: any) => {
-            res.send(400);
+            res.status(400);
             res.send({
               status: 'fail',
               data: {
@@ -100,7 +100,7 @@ export default class AnswerRouter extends APIRouter {
             });
           })
           .catch((error: any) => {
-            res.send(400);
+            res.status(400);
             res.send({
               status: 'fail',
               data: {
@@ -136,7 +136,7 @@ export default class AnswerRouter extends APIRouter {
             });
           })
           .catch((error: any) => {
-            res.send(400);
+            res.status(400);
             res.send({
               status: 'fail',
               data: {
