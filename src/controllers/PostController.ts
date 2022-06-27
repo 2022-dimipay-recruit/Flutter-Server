@@ -449,7 +449,6 @@ export default class PostController {
         client
           .create({
             data: {
-              id: postId,
               reason: reason,
               post: {
                 connect: {
