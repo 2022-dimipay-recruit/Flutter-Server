@@ -19,7 +19,7 @@ export default class extends APIRouter {
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         body: postSchema.getObjectSchema({
-          requiredProperties: ['title', 'content', 'isAnony', 'imageLink'],
+          requiredProperties: ['content', 'isAnony', 'imageLink'],
         }),
       }),
       (req, res): void => {
@@ -106,7 +106,7 @@ export default class extends APIRouter {
       getValidationMiddleware({
         params: userSchema.getObjectSchema({requiredProperties: ['id']}),
         body: postSchema.getObjectSchema({
-          requiredProperties: ['title', 'content', 'isAnony', 'imageLink'],
+          requiredProperties: ['content', 'isAnony', 'imageLink'],
         }),
       }),
       (req, res): void => {
@@ -226,7 +226,7 @@ export default class extends APIRouter {
       getValidationMiddleware({
         params: postSchema.getObjectSchema({requiredProperties: ['id']}),
         body: postSchema.getObjectSchema({
-          requiredProperties: ['title', 'content'],
+          requiredProperties: ['content'],
         }),
       }),
       (req, res) => {
@@ -239,7 +239,7 @@ export default class extends APIRouter {
                 req.params.id,
                 req.body,
               )
-                .then((post: Partial<Pick<Post, 'title' | 'content'>>) => {
+                .then((post: Partial<Pick<Post, 'content'>>) => {
                   res.send({
                     status: 'success',
                     data: [post],

@@ -244,20 +244,6 @@ export default class {
       ) => {
         client
           .findMany({
-            select: {
-              id: true,
-              title: true,
-              imageLink: true,
-              createdAt: true,
-              updatedAt: true,
-              isAnony: true,
-              isCommunity: true,
-              authorId: true,
-              reveiverId: true,
-              denied: true,
-              loveCount: true,
-              answerCount: true,
-            },
             where: {
               lover: {
                 some: {
@@ -291,20 +277,6 @@ export default class {
       ) => {
         client
           .findMany({
-            select: {
-              id: true,
-              title: true,
-              imageLink: true,
-              createdAt: true,
-              updatedAt: true,
-              isAnony: true,
-              isCommunity: true,
-              authorId: true,
-              reveiverId: true,
-              denied: true,
-              loveCount: true,
-              answerCount: true,
-            },
             where: {
               bookmaker: {
                 some: {
@@ -338,20 +310,6 @@ export default class {
       ) => {
         client
           .findMany({
-            select: {
-              id: true,
-              title: true,
-              imageLink: true,
-              createdAt: true,
-              updatedAt: true,
-              isAnony: true,
-              isCommunity: true,
-              authorId: true,
-              reveiverId: true,
-              denied: true,
-              loveCount: true,
-              answerCount: true,
-            },
             where: {
               authorId: userId,
             },

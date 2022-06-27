@@ -5,7 +5,7 @@ export default class PostController {
   public static createPublic(
     client: PrismaClient['post'],
     authorId: string,
-    post: Pick<Post, 'title' | 'content' | 'isAnony' | 'imageLink'>,
+    post: Pick<Post, 'content' | 'isAnony' | 'imageLink'>,
   ): Promise<Pick<Post, 'id'>> {
     return new Promise<Pick<Post, 'id'>>(
       (
@@ -44,7 +44,7 @@ export default class PostController {
     client: PrismaClient['post'],
     authorId: string,
     receiverId: string,
-    post: Pick<Post, 'title' | 'content' | 'isAnony' | 'imageLink'>,
+    post: Pick<Post, 'content' | 'isAnony' | 'imageLink'>,
   ): Promise<Pick<Post, 'id'>> {
     return new Promise<Pick<Post, 'id'>>(
       (
@@ -95,13 +95,11 @@ export default class PostController {
   public static update(
     client: PrismaClient['post'],
     postId: string,
-    post: Partial<Pick<Post, 'title' | 'content'>>,
-  ): Promise<Partial<Pick<Post, 'title' | 'content' | 'id'>>> {
-    return new Promise<Partial<Pick<Post, 'title' | 'content' | 'id'>>>(
+    post: Partial<Pick<Post, 'content'>>,
+  ): Promise<Partial<Pick<Post, 'content' | 'id'>>> {
+    return new Promise<Partial<Pick<Post, 'content' | 'id'>>>(
       (
-        resolve: (
-          value: Partial<Pick<Post, 'title' | 'content' | 'id'>>,
-        ) => void,
+        resolve: (value: Partial<Pick<Post, 'content' | 'id'>>) => void,
         reject: (reason?: any) => void,
       ) => {
         client
