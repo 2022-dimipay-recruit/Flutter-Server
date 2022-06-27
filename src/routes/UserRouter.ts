@@ -1,4 +1,4 @@
-import {User} from '@prisma/client';
+import {Post, User} from '@prisma/client';
 import UserController from '../controllers/UserController';
 import APIRouter from '../lib/APIRouter';
 import getAuthenticationMiddleware from '../middlewares/AuthenticationMiddleware';
@@ -524,6 +524,66 @@ export default class extends APIRouter {
                     : {googleUid: undefined, kakaoUid: undefined},
                 ),
               ],
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+          });
+
+        return;
+      },
+    );
+
+    this.router.get(
+      '/:id/bookmarks',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res): void => {
+        UserController.readBookmarks(req.prismaClient.post, req.params.id)
+          .then((bookmarks: Omit<Post, 'content'>[]) => {
+            res.send({
+              status: 'success',
+              data: bookmarks,
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+          });
+
+        return;
+      },
+    );
+
+    this.router.get(
+      '/:id/loves',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res): void => {
+        UserController.readLikes(req.prismaClient.post, req.params.id)
+          .then((loves: Omit<Post, 'content'>[]) => {
+            res.send({
+              status: 'success',
+              data: loves,
             });
 
             return;

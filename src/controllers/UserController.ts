@@ -1,4 +1,4 @@
-import {PrismaClient, User} from '@prisma/client';
+import {Post, PrismaClient, User} from '@prisma/client';
 import {Page} from '../typings/CustomType';
 
 // UserController
@@ -225,5 +225,99 @@ export default class {
   public static delete(client: PrismaClient['user']): void {
     // TODO: implement later
     return;
+  }
+
+  /**
+   * 유저의 좋아요 포스트 데이터 목록을 불러옵니다.
+   * @param client PrismaClient
+   * @param userId 유저 아이디
+   * @returns 유저의 좋아요 포스트 데이터 목록
+   */
+  public static readLikes(
+    client: PrismaClient['post'],
+    userId: string,
+  ): Promise<Omit<Post, 'content'>[]> {
+    return new Promise<Omit<Post, 'content'>[]>(
+      (
+        resolve: (value: Omit<Post, 'content'>[]) => void,
+        reject: (reason?: any) => void,
+      ) => {
+        client
+          .findMany({
+            select: {
+              id: true,
+              title: true,
+              imageLink: true,
+              createdAt: true,
+              updatedAt: true,
+              isAnony: true,
+              isCommunity: true,
+              authorId: true,
+              reveiverId: true,
+              denied: true,
+              loveCount: true,
+              answerCount: true,
+            },
+            where: {
+              lover: {
+                some: {
+                  id: userId,
+                },
+              },
+            },
+          })
+          .then(resolve)
+          .catch(reject);
+
+        return;
+      },
+    );
+  }
+
+  /**
+   * 유저가 북마크한 포스트 목록을 불러옵니다.
+   * @param client PrismaClient
+   * @param userId 유저 아이디
+   * @returns 유저가 북마크한 포스트 목록
+   */
+  public static readBookmarks(
+    client: PrismaClient['post'],
+    userId: string,
+  ): Promise<Omit<Post, 'content'>[]> {
+    return new Promise<Omit<Post, 'content'>[]>(
+      (
+        resolve: (value: Omit<Post, 'content'>[]) => void,
+        reject: (reason?: any) => void,
+      ) => {
+        client
+          .findMany({
+            select: {
+              id: true,
+              title: true,
+              imageLink: true,
+              createdAt: true,
+              updatedAt: true,
+              isAnony: true,
+              isCommunity: true,
+              authorId: true,
+              reveiverId: true,
+              denied: true,
+              loveCount: true,
+              answerCount: true,
+            },
+            where: {
+              bookmaker: {
+                some: {
+                  id: userId,
+                },
+              },
+            },
+          })
+          .then(resolve)
+          .catch(reject);
+
+        return;
+      },
+    );
   }
 }
