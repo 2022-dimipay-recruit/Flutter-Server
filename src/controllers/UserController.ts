@@ -320,4 +320,47 @@ export default class {
       },
     );
   }
+
+  /**
+   * 유저가 적은 질문 목록을 불러옵니다.
+   * @param client PrismaClient
+   * @param userId 유저 아이디
+   * @returns 유저가 적은 질문 목록
+   */
+  public static readPosts(
+    client: PrismaClient['post'],
+    userId: string,
+  ): Promise<Omit<Post, 'content'>[]> {
+    return new Promise<Omit<Post, 'content'>[]>(
+      (
+        resolve: (value: Omit<Post, 'content'>[]) => void,
+        reject: (reason?: any) => void,
+      ) => {
+        client
+          .findMany({
+            select: {
+              id: true,
+              title: true,
+              imageLink: true,
+              createdAt: true,
+              updatedAt: true,
+              isAnony: true,
+              isCommunity: true,
+              authorId: true,
+              reveiverId: true,
+              denied: true,
+              loveCount: true,
+              answerCount: true,
+            },
+            where: {
+              authorId: userId,
+            },
+          })
+          .then(resolve)
+          .catch(reject);
+
+        return;
+      },
+    );
+  }
 }

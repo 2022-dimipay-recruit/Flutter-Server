@@ -601,5 +601,36 @@ export default class extends APIRouter {
         return;
       },
     );
+
+    // get user's posts
+    this.router.get(
+      '/:id/posts',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: userSchema.getObjectSchema({requiredProperties: ['id']}),
+      }),
+      (req, res): void => {
+        UserController.readPosts(req.prismaClient.post, req.params.id)
+          .then((posts: Omit<Post, 'content'>[]) => {
+            res.send({
+              status: 'success',
+              data: posts,
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+          });
+
+        return;
+      },
+    );
   }
 }
