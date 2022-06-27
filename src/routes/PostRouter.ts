@@ -5,6 +5,7 @@ import getAuthenticationMiddleware from '../middlewares/AuthenticationMiddleware
 import getValidationMiddleware from '../middlewares/ValidationMiddleware';
 import pageSchema from '../schemas/PageSchema';
 import postSchema from '../schemas/PostSchema';
+import ReportSchema from '../schemas/ReportSchema';
 import userSchema from '../schemas/UserSchema';
 import {} from '../typings/ExpressRequest';
 
@@ -500,6 +501,48 @@ export default class extends APIRouter {
       }),
       (req, res) => {
         PostController.denyPost(req.prismaClient.post, req.params.id)
+          .then(() => {
+            res.send({
+              status: 'success',
+              data: {
+                id: req.params.id,
+              },
+            });
+
+            return;
+          })
+          .catch((error: any) => {
+            res.status(400);
+            res.send({
+              status: 'fail',
+              data: {
+                message: error.message,
+              },
+            });
+
+            return;
+          });
+
+        return;
+      },
+    );
+
+    this.router.post(
+      '/:id/report',
+      getAuthenticationMiddleware(),
+      getValidationMiddleware({
+        params: postSchema.getObjectSchema({requiredProperties: ['id']}),
+        body: ReportSchema.getObjectSchema({
+          requiredProperties: ['reason'],
+        }),
+      }),
+      (req, res) => {
+        PostController.reportPost(
+          req.prismaClient.report,
+          req.params.id,
+          req.body.reason,
+          req.userId as string,
+        )
           .then(() => {
             res.send({
               status: 'success',
