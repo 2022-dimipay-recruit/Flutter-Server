@@ -47,11 +47,26 @@ export default class FollowController {
    * @param followedId 팔로우받는 사람의 id를 넘깁니다.
    * @returns 삭제된 팔로우의 정보를 넘깁니다.
    */
-  public static async deleteFollow(client: PrismaClient, followDataId: string) {
+  public static async deleteFollow(
+    client: PrismaClient,
+    follwerId: string,
+    followedId: string,
+  ) {
     try {
+      const findFollow = await client.follows.findFirst({
+        where: {
+          follower: {
+            id: follwerId,
+          },
+          following: {
+            id: followedId,
+          },
+        },
+      });
+      if (!findFollow) throw new Error('Follow not found');
       const follows = await client.follows.delete({
         where: {
-          id: followDataId,
+          id: findFollow.id,
         },
         include: {
           follower: true,

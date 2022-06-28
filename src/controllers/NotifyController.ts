@@ -79,9 +79,6 @@ export default class NotifyController {
             id: userId,
           },
         },
-        include: {
-          user: true,
-        },
       });
       return notifyList;
     } catch (err) {
