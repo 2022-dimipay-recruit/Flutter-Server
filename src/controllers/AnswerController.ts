@@ -1,4 +1,5 @@
 import {PrismaClient} from '@prisma/client';
+import NotifyController, {NotifyTypes} from './NotifyController';
 
 export default class AnswerController {
   /**
@@ -43,6 +44,13 @@ export default class AnswerController {
           post: true,
         },
       });
+      await NotifyController.createNotify(
+        client,
+        NotifyTypes.NEW_ANSWER,
+        answer.id,
+        `${answer.author.nickname}님이 내 글에 새 답변을 올렸습니다!`,
+        answer.authorId,
+      );
       await client.post.update({
         where: {
           id: postId,
