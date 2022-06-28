@@ -67,7 +67,7 @@ export default class extends APIRouter {
     );
 
     this.router.delete(
-      '/:id/unfollow',
+      '/:id',
       getAuthenticationMiddleware(),
       getValidationMiddleware({
         params: userSchema.getObjectSchema({
@@ -77,11 +77,7 @@ export default class extends APIRouter {
       (req, res) => {
         UserController.read(req.prismaClient.user, {user: {id: req.params.id}})
           .then(() => {
-            FollowController.deleteFollow(
-              req.prismaClient,
-              req.userId as string,
-              req.params.id,
-            )
+            FollowController.deleteFollow(req.prismaClient, req.params.id)
               .then(() => {
                 res.send({
                   status: 'success',

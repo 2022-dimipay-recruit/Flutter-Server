@@ -37,19 +37,20 @@ model Notifications {
   createdAt DateTime @default(now())
   isRead    Boolean  @default(false)
   userId    String
-  user      User     @relation("notificationuser", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation("notificationuser", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "Notifications_userId_fkey")
 }
 
 model Follows {
+  id          String @id @default(uuid())
   followerId  String
   followingId String
-  follower    User   @relation("follower", fields: [followerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  following   User   @relation("following", fields: [followingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  follower    User   @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
 
-  @@id([followerId, followingId])
   @@index([followingId], map: "Follows_followingId_fkey")
+  @@index([followerId], map: "Follows_followerId_fkey")
 }
 
 model Post {
@@ -65,8 +66,8 @@ model Post {
   denied      Boolean  @default(false)
   loveCount   Int      @default(0)
   answerCount Int      @default(0)
-  author      User     @relation("author", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author      User     @relation("author", fields: [authorId], references: [id], onDelete: Cascade)
+  reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id], onDelete: Cascade)
   answers     Answer[] @relation("answer")
   reports     Report[] @relation("reportpost")
   bookmaker   User[]   @relation("bookmark")
@@ -84,8 +85,8 @@ model Answer {
   isAnony   Boolean
   authorId  String
   postId    String
-  author    User           @relation("answerauthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post           @relation("answer", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author    User           @relation("answerauthor", fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post           @relation("answer", fields: [postId], references: [id], onDelete: Cascade)
   reports   AnswerReport[] @relation("reportanswer")
 
   @@index([authorId], map: "Answer_authorId_fkey")
@@ -99,8 +100,8 @@ model Report {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reason    String
-  post      Post     @relation("reportpost", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user      User     @relation("reportuser", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  post      Post     @relation("reportpost", fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("reportuser", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([postId], map: "Report_postId_fkey")
   @@index([userId], map: "Report_userId_fkey")
@@ -113,8 +114,8 @@ model AnswerReport {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reason    String
-  answer    Answer   @relation("reportanswer", fields: [answerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user      User     @relation("answerreportuser", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  answer    Answer   @relation("reportanswer", fields: [answerId], references: [id], onDelete: Cascade)
+  user      User     @relation("answerreportuser", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([answerId], map: "AnswerReport_answerId_fkey")
   @@index([userId], map: "AnswerReport_userId_fkey")
