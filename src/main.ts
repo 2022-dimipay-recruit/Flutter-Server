@@ -16,6 +16,7 @@ import FollowRouter from './routes/FollowRouter';
 import UploadRouter from './routes/UploadRouter';
 import AnswerRouter from './routes/AnswerRouter';
 import PostRouter from './routes/PostRouter';
+import NotifyRouter from './routes/NotifyRouter';
 
 class MainServer {
   private app: Express.Application;
@@ -55,6 +56,7 @@ class MainServer {
     this.router.use('/auth', new AuthRouter().expressRouter);
     this.router.use('/follows', new FollowRouter().expressRouter);
     this.router.use('/login', new LoginRouter().expressRouter);
+    this.router.use('/notify', new NotifyRouter().expressRouter);
     this.router.use('/posts', new PostRouter().expressRouter);
     this.router.use('/return', new ReturnRouter().expressRouter);
     this.router.use('/uploads', new UploadRouter().expressRouter);
