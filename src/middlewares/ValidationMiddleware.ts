@@ -6,7 +6,7 @@ import {NextFunction, Request, Response} from 'express';
 const ajv = new Ajv({allErrors: true});
 addFormats(ajv);
 
-export default function getValidationMiddleware(options: ValidationOptions) {
+export function getValidationMiddleware(options: ValidationOptions) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (typeof options.params === 'object') {
       const validate = ajv.compile(options.params.valueOf());
@@ -79,3 +79,5 @@ export default function getValidationMiddleware(options: ValidationOptions) {
     return;
   };
 }
+
+export default getValidationMiddleware;

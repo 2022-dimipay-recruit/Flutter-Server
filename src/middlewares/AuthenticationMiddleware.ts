@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import jsonWebToken, {Jwt} from 'jsonwebtoken';
 
-export default function getAuthenticationMiddleware() {
+export function getAuthenticationMiddleware() {
   return (req: Request, res: Response, next: NextFunction) => {
     if (req.headers.authorization?.startsWith('Bearer ')) {
       try {
@@ -42,3 +42,5 @@ export default function getAuthenticationMiddleware() {
     }
   };
 }
+
+export default getAuthenticationMiddleware;
