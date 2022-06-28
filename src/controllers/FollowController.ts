@@ -1,5 +1,6 @@
 import {PrismaClient} from '@prisma/client';
 import {Page} from '../typings/CustomType';
+import NotifyController, {NotifyTypes} from './NotifyController';
 
 export default class FollowController {
   /**
@@ -33,6 +34,19 @@ export default class FollowController {
           following: true,
         },
       });
+      const user = await client.user.findUnique({
+        where: {
+          id: followerId,
+        },
+      });
+      if (!user) throw new Error('User not found');
+      await NotifyController.createNotify(
+        client,
+        NotifyTypes.NEW_FOLLOW,
+        followerId,
+        `${user.nickname}님이 당신을 팔로우하였습니다!`,
+        followedId,
+      );
       return follows;
     } catch (err) {
       throw err;

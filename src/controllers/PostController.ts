@@ -1,95 +1,130 @@
-import {PrismaClient, Post, User, Prisma} from '@prisma/client';
+import {
+  PrismaClient,
+  Post,
+  User,
+  Prisma,
+  Follows,
+  Report,
+} from '@prisma/client';
 import {Page} from '../typings/CustomType';
+import NotifyController, {NotifyTypes} from './NotifyController';
 
 export default class PostController {
-  public static createPublic(
-    client: PrismaClient['post'],
+  public static async createPublic(
+    client: PrismaClient,
     authorId: string,
     post: Pick<Post, 'content' | 'isAnony' | 'imageLink'>,
   ): Promise<Pick<Post, 'id'>> {
-    return new Promise<Pick<Post, 'id'>>(
-      (
-        resolve: (value: Pick<Post, 'id'>) => void,
-        reject: (reason?: any) => void,
-      ) => {
-        client
-          .create({
-            data: Object.assign(post, {
-              isCommunity: true,
-              author: {
-                connect: {
-                  id: authorId,
-                },
+    try {
+      const publicPost = await client.post.create({
+        data: Object.assign(post, {
+          isCommunity: true,
+          author: {
+            connect: {
+              id: authorId,
+            },
+          },
+        }),
+        include: {
+          author: true,
+        },
+      });
+
+      if (!post.isAnony)
+        client.follows
+          .findMany({
+            where: {
+              following: {
+                id: authorId,
               },
-            }),
-            include: {
-              author: true,
             },
           })
-          .then((postWithAuthor: Post & {author: User}) => {
-            resolve({
-              id: postWithAuthor['id'],
+          .then((follows: Follows[]) => {
+            follows.forEach(follow => {
+              NotifyController.createNotify(
+                client,
+                NotifyTypes.NEW_POST,
+                publicPost.id,
+                `${publicPost.author.nickname}님이 새 공개 질문을 작성했습니다!`,
+                follow.followerId,
+              );
             });
+          });
 
-            return;
-          })
-          .catch(reject);
-
-        return;
-      },
-    );
+      return {
+        id: publicPost.id,
+      };
+    } catch (err) {
+      throw err;
+    }
   }
 
-  public static createPrivate(
-    client: PrismaClient['post'],
+  public static async createPrivate(
+    client: PrismaClient,
     authorId: string,
     receiverId: string,
     post: Pick<Post, 'content' | 'isAnony' | 'imageLink'>,
   ): Promise<Pick<Post, 'id'>> {
-    return new Promise<Pick<Post, 'id'>>(
-      (
-        resolve: (value: Pick<Post, 'id'>) => void,
-        reject: (reason?: any) => void,
-      ) => {
-        client
-          .create({
-            data: Object.assign(post, {
-              isCommunity: false,
-              author: {
-                connect: {
-                  id: authorId,
-                },
+    try {
+      const privatePost = await client.post.create({
+        data: Object.assign(post, {
+          isCommunity: false,
+          author: {
+            connect: {
+              id: authorId,
+            },
+          },
+          reveiver: {
+            connect: {
+              id: receiverId,
+            },
+          },
+        }),
+        include: {
+          author: true,
+          reveiver: true,
+        },
+      });
+
+      if (!post.isAnony)
+        client.follows
+          .findMany({
+            where: {
+              following: {
+                id: authorId,
               },
-              reveiver: {
-                connect: {
-                  id: receiverId,
-                },
-              },
-            }),
-            include: {
-              author: true,
-              reveiver: true,
             },
           })
-          .then(
-            (
-              postWithAuthorAndReceiver: Post & {
-                author: User;
-                reveiver: User | null;
-              },
-            ) => {
-              resolve({
-                id: postWithAuthorAndReceiver['id'],
-              });
+          .then((follows: Follows[]) => {
+            follows.forEach(follow => {
+              NotifyController.createNotify(
+                client,
+                NotifyTypes.NEW_POST,
+                privatePost.id,
+                `${privatePost.author.nickname}님이 새 개인 질문을 작성했습니다!`,
+                follow.followerId,
+              );
+            });
+          });
 
-              return;
-            },
-          )
-          .catch(reject);
+      await NotifyController.createNotify(
+        client,
+        NotifyTypes.NEW_POST,
+        privatePost.id,
+        `${
+          post.isAnony
+            ? '익명의 한 유저가'
+            : privatePost.author.nickname + '님이'
+        } 새 개인 질문을 작성했습니다!`,
+        receiverId,
+      );
 
-        return;
-      },
-    );
+      return {
+        id: privatePost.id,
+      };
+    } catch (err) {
+      throw err;
+    }
   }
 
   public static update(
@@ -436,38 +471,36 @@ export default class PostController {
     );
   }
 
-  public static reportPost(
-    client: PrismaClient['report'],
+  public static async reportPost(
+    client: PrismaClient,
     postId: string,
     reason: string,
     reporterId: string,
-  ): Promise<void> {
-    return new Promise<void>(
-      (resolve: (value: void) => void, reject: (reason?: any) => void) => {
-        client
-          .create({
-            data: {
-              reason: reason,
-              post: {
-                connect: {
-                  id: postId,
-                },
-              },
-              user: {
-                connect: {
-                  id: reporterId,
-                },
-              },
+  ): Promise<Report> {
+    try {
+      const report = await client.report.create({
+        data: {
+          reason: reason,
+          post: {
+            connect: {
+              id: postId,
             },
-            include: {
-              post: true,
-              user: true,
+          },
+          user: {
+            connect: {
+              id: reporterId,
             },
-          })
-          .then(() => resolve())
-          .catch(reject);
-      },
-    );
+          },
+        },
+        include: {
+          post: true,
+          user: true,
+        },
+      });
+      return report;
+    } catch (err) {
+      throw err;
+    }
   }
 
   public static denyPost(client: PrismaClient['post'], postId: string) {

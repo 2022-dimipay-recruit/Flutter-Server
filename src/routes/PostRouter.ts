@@ -24,7 +24,7 @@ export default class extends APIRouter {
       }),
       (req, res): void => {
         PostController.createPublic(
-          req.prismaClient.post,
+          req.prismaClient,
           req.userId as string,
           req.body,
         )
@@ -111,7 +111,7 @@ export default class extends APIRouter {
       }),
       (req, res): void => {
         PostController.createPrivate(
-          req.prismaClient.post,
+          req.prismaClient,
           req.userId as string,
           req.params.id,
           req.body,
@@ -538,7 +538,7 @@ export default class extends APIRouter {
       }),
       (req, res) => {
         PostController.reportPost(
-          req.prismaClient.report,
+          req.prismaClient,
           req.params.id,
           req.body.reason,
           req.userId as string,
