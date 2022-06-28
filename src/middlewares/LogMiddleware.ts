@@ -25,7 +25,8 @@ export default function LogMiddleware() {
           res.statusCode +
           ' "' +
           res.header('user-agent') +
-          '"',
+          '"' +
+          (req.userId ? ' USERAUTH : ' + req.userId : ''),
       );
     } else {
       res.on('finish', () => {
@@ -41,7 +42,8 @@ export default function LogMiddleware() {
             res.statusCode +
             ' "' +
             req.header('user-agent') +
-            '"',
+            '"' +
+            (req.userId ? ' USERAUTH : ' + req.userId : ''),
         );
       });
     }
