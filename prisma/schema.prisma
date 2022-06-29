@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  link          String          @unique
+  nickname      String
+  email         String
+  profileImage  String
+  description   String
+  createdAt     DateTime        @default(now())
+  kakaoUid      String?         @unique
+  googleUid     String?         @unique
+  myAnswer      Answer[]        @relation("answerauthor")
+  answerReports AnswerReport[]  @relation("answerreportuser")
+  followers     Follows[]       @relation("follower")
+  following     Follows[]       @relation("following")
+  notifications Notifications[] @relation("notificationuser")
+  myPost        Post[]          @relation("author")
+  receivePost   Post[]          @relation("reveiver")
+  reports       Report[]        @relation("reportuser")
+  bookmarkPost  Post[]          @relation("bookmark")
+  lovePost      Post[]          @relation("love")
+}
+
+model Notifications {
+  id        String   @id @default(uuid())
+  linkedID  String   @unique
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+  userId    String
+  user      User     @relation("notificationuser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Notifications_userId_fkey")
+}
+
+model Follows {
+  id          String @id @default(uuid())
+  followerId  String
+  followingId String
+  follower    User   @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@index([followingId], map: "Follows_followingId_fkey")
+  @@index([followerId], map: "Follows_followerId_fkey")
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isAnony     Boolean
+  isCommunity Boolean
+  reveiverId  String?
+  authorId    String
+  imageLink   String
+  denied      Boolean  @default(false)
+  loveCount   Int      @default(0)
+  answerCount Int      @default(0)
+  author      User     @relation("author", fields: [authorId], references: [id], onDelete: Cascade)
+  reveiver    User?    @relation("reveiver", fields: [reveiverId], references: [id], onDelete: Cascade)
+  answers     Answer[] @relation("answer")
+  reports     Report[] @relation("reportpost")
+  bookmaker   User[]   @relation("bookmark")
+  lover       User[]   @relation("love")
+
+  @@index([authorId], map: "CommunityPost_authorId_fkey")
+  @@index([reveiverId], map: "Post_reveiverId_fkey")
+}
+
+model Answer {
+  id        String         @id @default(uuid())
+  content   String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  isAnony   Boolean
+  authorId  String
+  postId    String
+  author    User           @relation("answerauthor", fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post           @relation("answer", fields: [postId], references: [id], onDelete: Cascade)
+  reports   AnswerReport[] @relation("reportanswer")
+
+  @@index([authorId], map: "Answer_authorId_fkey")
+  @@index([postId], map: "Answer_postId_fkey")
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reason    String
+  post      Post     @relation("reportpost", fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("reportuser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId], map: "Report_postId_fkey")
+  @@index([userId], map: "Report_userId_fkey")
+}
+
+model AnswerReport {
+  id        String   @id @default(uuid())
+  answerId  String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reason    String
+  answer    Answer   @relation("reportanswer", fields: [answerId], references: [id], onDelete: Cascade)
+  user      User     @relation("answerreportuser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([answerId], map: "AnswerReport_answerId_fkey")
+  @@index([userId], map: "AnswerReport_userId_fkey")
+}
